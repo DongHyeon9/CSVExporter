@@ -1,21 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="ThirdParty">
       <UniqueIdentifier>{a8dcb592-0541-48e3-9bb0-af94e5d3a8c6}</UniqueIdentifier>
     </Filter>
     <Filter Include="ThirdParty\OpenXLSX">
       <UniqueIdentifier>{fa50db98-01a2-4814-a251-27579428a546}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{0d3ec369-b324-45c2-8a6e-22acadc97f6a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Class">
+      <UniqueIdentifier>{f8d61a0a-ad89-443d-a2c2-f52310caceb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main\Class\Common">
+      <UniqueIdentifier>{be0fdb83-6d04-453b-a165-112059772659}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CSVExporter.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLCell.cpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
     </ClCompile>
@@ -81,6 +83,15 @@
     </ClCompile>
     <ClCompile Include="..\Thirdparty\OpenXLSX\pugixml\pugixml.cpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="CSVExpoter.cpp">
+      <Filter>Main\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="HeaderGenerater.cpp">
+      <Filter>Main\Class</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -233,6 +244,15 @@
     </ClInclude>
     <ClInclude Include="..\Thirdparty\OpenXLSX\pugixml\pugiconfig.hpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
+    </ClInclude>
+    <ClInclude Include="CSVExpoter.h">
+      <Filter>Main\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="HeaderGenerater.h">
+      <Filter>Main\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpoterCore.h">
+      <Filter>Main\Class\Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

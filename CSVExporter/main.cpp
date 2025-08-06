@@ -1,15 +1,5 @@
-﻿#include <iostream>
-#include <windows.h>
-#include <shobjidl.h>
-#include <atlbase.h>
-#include <io.h>
-#include <fcntl.h>
-#include "OpenXLSX.hpp"
-
-struct ComInit {
-    ComInit() { CoInitialize(nullptr); }
-    ~ComInit() { CoUninitialize(); }
-};
+﻿#include "CSVExpoter.h"
+#include "HeaderGenerater.h"
 
 int main() {
     _setmode(_fileno(stdout), _O_U16TEXT);
