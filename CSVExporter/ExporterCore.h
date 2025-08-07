@@ -55,7 +55,7 @@ struct ComInit
 #else
 #define LOG_LINE ((void)0)
 #endif
-#define LOG(str, ...) LOG_LINE wprintf_s(TEXT(str), ##__VA_ARGS__);std::wcout << std::endl
+#define LOG(str, ...) LOG_LINE; wprintf_s(TEXT(str), ##__VA_ARGS__);std::wcout << std::endl
 #define CHECK(expr, ret, str) if(!(expr)) {LOG(str); return ret;}
 #define END_OF_PROGRAM(ret) std::wcout << TEXT("Please Press Any Key"); while (true) if (_kbhit()) break; return ret
 #define TYPE(container) decltype(*container.data())
