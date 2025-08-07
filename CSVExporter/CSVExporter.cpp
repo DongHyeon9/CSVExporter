@@ -48,6 +48,9 @@ bool CSVExporter::WriteCSV(std::string _Path)
 	if (path.has_parent_path())
 		std::filesystem::create_directories(path.parent_path());
 
+	// TODO
+	// 내용읽어들여서 Server, Client 따로 CSV 쓰기
+
 	std::ofstream outFile{ finalFilePath.c_str() };
 	outFile << "bbb";
 	outFile.close();

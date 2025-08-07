@@ -64,7 +64,9 @@ struct ComInit
 #pragma region Global
 namespace GLOBAL
 {
-	const std::string CSV_OUTPUT_DIR_FILE_NAME{ "CsvOutputDir.txt" };
+    extern const std::string SERVER_POST_FIX_NAME;
+    extern const std::string CLIENT_POST_FIX_NAME;
+    extern const std::string CSV_OUTPUT_DIR_FILE_NAME;
     extern std::string CURRENT_DIR;
 }
 #pragma endregion Global

@@ -1,6 +1,9 @@
 ﻿#include "ExporterCore.h"
 
 std::string GLOBAL::CURRENT_DIR{};
+const std::string GLOBAL::SERVER_POST_FIX_NAME{ "_Server" };
+const std::string GLOBAL::CLIENT_POST_FIX_NAME{ "_Client" };
+const std::string GLOBAL::CSV_OUTPUT_DIR_FILE_NAME{ "CsvOutputDir.txt" };
 
 bool InitSystem()
 {
