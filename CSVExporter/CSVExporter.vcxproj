@@ -153,7 +153,8 @@
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLXmlData.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLXmlFile.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLZipArchive.cpp" />
-    <ClCompile Include="CSVExpoter.cpp" />
+    <ClCompile Include="CSVExporter.cpp" />
+    <ClCompile Include="ExporterCore.cpp" />
     <ClCompile Include="HeaderGenerater.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -208,8 +209,8 @@
     <ClInclude Include="..\Thirdparty\OpenXLSX\pugixml\pugixml.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\sources\utilities\XLUtilities.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\zippy\zippy.hpp" />
-    <ClInclude Include="ExpoterCore.h" />
-    <ClInclude Include="CSVExpoter.h" />
+    <ClInclude Include="ExporterCore.h" />
+    <ClInclude Include="CSVExporter.h" />
     <ClInclude Include="HeaderGenerater.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

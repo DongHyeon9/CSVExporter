@@ -1,5 +1,5 @@
-#pragma once
-#include "ExpoterCore.h"
+﻿#pragma once
+#include "ExporterCore.h"
 
 class HeaderGenerater
 {

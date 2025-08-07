@@ -87,11 +87,14 @@
     <ClCompile Include="main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="CSVExpoter.cpp">
+    <ClCompile Include="CSVExporter.cpp">
       <Filter>Main\Class</Filter>
     </ClCompile>
     <ClCompile Include="HeaderGenerater.cpp">
       <Filter>Main\Class</Filter>
+    </ClCompile>
+    <ClCompile Include="ExporterCore.cpp">
+      <Filter>Main\Class\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -245,13 +248,13 @@
     <ClInclude Include="..\Thirdparty\OpenXLSX\pugixml\pugiconfig.hpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
     </ClInclude>
-    <ClInclude Include="CSVExpoter.h">
+    <ClInclude Include="CSVExporter.h">
       <Filter>Main\Class</Filter>
     </ClInclude>
     <ClInclude Include="HeaderGenerater.h">
       <Filter>Main\Class</Filter>
     </ClInclude>
-    <ClInclude Include="ExpoterCore.h">
+    <ClInclude Include="ExporterCore.h">
       <Filter>Main\Class\Common</Filter>
     </ClInclude>
   </ItemGroup>
