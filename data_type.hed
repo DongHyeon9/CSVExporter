@@ -1,0 +1,8 @@
+int:int32
+float:float
+string:FString
+enum:E[EnumName]
+array:TArray<[DataType]>
+
+StructVariables:UPROPERTY(EditAnywhere, BlueprintReadOnly) [DataType] [VariableName];
+EnumTypes:[EnumType],

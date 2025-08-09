@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\OpenXLSX\;$(SolutionDir)Thirdparty\OpenXLSX\sources;$(SolutionDir)Thirdparty\OpenXLSX\headers;$(SolutionDir)Thirdparty\OpenXLSX\nowide;$(SolutionDir)Thirdparty\OpenXLSX\pugixml;$(SolutionDir)Thirdparty\OpenXLSX\zippy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\OpenXLSX\;$(SolutionDir)Thirdparty\OpenXLSX\headers\;$(SolutionDir)Thirdparty\OpenXLSX\external\pugixml\;$(SolutionDir)Thirdparty\OpenXLSX\external\nowide\;$(SolutionDir)Thirdparty\OpenXLSX\external\zippy\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -121,7 +121,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\OpenXLSX\;$(SolutionDir)Thirdparty\OpenXLSX\sources;$(SolutionDir)Thirdparty\OpenXLSX\headers;$(SolutionDir)Thirdparty\OpenXLSX\nowide;$(SolutionDir)Thirdparty\OpenXLSX\pugixml;$(SolutionDir)Thirdparty\OpenXLSX\zippy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Thirdparty\OpenXLSX\;$(SolutionDir)Thirdparty\OpenXLSX\headers\;$(SolutionDir)Thirdparty\OpenXLSX\external\pugixml\;$(SolutionDir)Thirdparty\OpenXLSX\external\nowide\;$(SolutionDir)Thirdparty\OpenXLSX\external\zippy\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,7 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\Thirdparty\OpenXLSX\pugixml\pugixml.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\external\pugixml\pugixml.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLCell.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLCellIterator.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLCellRange.cpp" />
@@ -139,19 +139,25 @@
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLCellValue.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLColor.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLColumn.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLComments.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLContentTypes.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLDateTime.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLDocument.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLDrawing.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLFormula.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLMergeCells.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLProperties.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLRelationships.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLRow.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLRowData.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLSharedStrings.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLSheet.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLStyles.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLTables.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLWorkbook.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLXmlData.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLXmlFile.cpp" />
+    <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLXmlParser.cpp" />
     <ClCompile Include="..\Thirdparty\OpenXLSX\sources\XLZipArchive.cpp" />
     <ClCompile Include="CSVExporter.cpp" />
     <ClCompile Include="ExporterCore.cpp" />
@@ -159,6 +165,26 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\args.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\cenv.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\config.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\convert.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\cstdio.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\cstdlib.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\encoding_errors.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\encoding_utf.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\filebuf.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\fstream.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\iostream.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\scoped_ptr.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\stackstring.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\system.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\utf.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\utf8_codecvt.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\nowide\nowide\windows.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\pugixml\pugixml.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\external\zippy\zippy.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\IZipArchive.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLCell.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLCellIterator.hpp" />
@@ -168,47 +194,32 @@
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLColor.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLColumn.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLCommandQuery.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLComments.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLConstants.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLContentTypes.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLDateTime.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLDocument.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLDrawing.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLException.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLFormula.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLIterator.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLMergeCells.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLProperties.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLRelationships.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLRow.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLRowData.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLSharedStrings.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLSheet.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLStyles.hpp" />
+    <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLTables.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLWorkbook.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLXmlData.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLXmlFile.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLXmlParser.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLZipArchive.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\args.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\cenv.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\config.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\convert.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\cstdio.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\cstdlib.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\encoding_errors.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\encoding_utf.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\filebuf.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\fstream.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\iostream.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\scoped_ptr.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\stackstring.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\system.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\utf.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\utf8_codecvt.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\nowide\nowide\windows.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\OpenXLSX-Exports.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\OpenXLSX.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\pugixml\pugiconfig.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\pugixml\pugixml.hpp" />
     <ClInclude Include="..\Thirdparty\OpenXLSX\sources\utilities\XLUtilities.hpp" />
-    <ClInclude Include="..\Thirdparty\OpenXLSX\zippy\zippy.hpp" />
     <ClInclude Include="ExporterCore.h" />
     <ClInclude Include="CSVExporter.h" />
     <ClInclude Include="HeaderGenerater.h" />

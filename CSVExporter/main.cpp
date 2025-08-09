@@ -1,4 +1,8 @@
-﻿#include "CSVExporter.h"
+﻿#pragma warning( disable : 4083 )
+#pragma warning( disable : 4819 )
+#pragma warning( disable : 4996 )
+
+#include "CSVExporter.h"
 #include "HeaderGenerater.h"
 
 int main() {

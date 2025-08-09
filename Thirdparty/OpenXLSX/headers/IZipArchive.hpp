@@ -46,9 +46,11 @@ YM      M9  MM    MM MM       MM    MM   d'  `MM.    MM            MM   d'  `MM.
 #ifndef OPENXLSX_IZIPARCHIVE_HPP
 #define OPENXLSX_IZIPARCHIVE_HPP
 
-#pragma warning(push)
-#pragma warning(disable : 4251)
-#pragma warning(disable : 4275)
+#ifdef _MSC_VER    // conditionally enable MSVC specific pragmas to avoid other compilers warning about unknown pragmas
+#   pragma warning(push)
+#   pragma warning(disable : 4251)
+#   pragma warning(disable : 4275)
+#endif // _MSC_VER
 
 // ===== OpenXLSX Includes ===== //
 #include "OpenXLSX-Exports.hpp"
@@ -173,7 +175,7 @@ namespace OpenXLSX
             return m_zipArchive->getEntry(name);
         }
 
-        inline bool hasEntry(const std::string& entryName) {
+        inline bool hasEntry(const std::string& entryName) const {
             return m_zipArchive->hasEntry(entryName);
         }
 
@@ -238,7 +240,7 @@ namespace OpenXLSX
 
             inline virtual std::string getEntry(const std::string& name) = 0;
 
-            inline virtual bool hasEntry(const std::string& entryName) = 0;
+            inline virtual bool hasEntry(const std::string& entryName) const = 0;
 
         };
 
@@ -328,7 +330,7 @@ namespace OpenXLSX
                 return ZipType.getEntry(name);
             }
 
-            inline bool hasEntry(const std::string& entryName) override {
+            inline bool hasEntry(const std::string& entryName) const override {
                 return ZipType.hasEntry(entryName);
             }
 
@@ -341,5 +343,8 @@ namespace OpenXLSX
 
 }    // namespace OpenXLSX
 
-#pragma warning(pop)
+#ifdef _MSC_VER    // conditionally enable MSVC specific pragmas to avoid other compilers warning about unknown pragmas
+#   pragma warning(pop)
+#endif // _MSC_VER
+
 #endif    // OPENXLSX_IZIPARCHIVE_HPP

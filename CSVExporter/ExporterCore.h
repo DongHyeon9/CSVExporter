@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <conio.h>
 #include <locale>
+#include <cmath>
 
 #include <windows.h>
 #include <shobjidl.h>
@@ -36,10 +37,27 @@ using uint64 = unsigned __int64;
 #pragma endregion Type
 
 #pragma region Enum
-#pragma endregion Enum
+enum class EDATA_TYPE : uint8
+{
+    INT,
+    FLOAT,
+    STRING,
+    ENUM,
+};
 
-#pragma region Value
-#pragma endregion Value
+enum class EUSES : uint8
+{
+    ALL,
+    CLIENT,
+    SERVER,
+};
+
+enum class ELINE_TYPE : uint8
+{
+    ROW,
+    COLUMN,
+};
+#pragma endregion Enum
 
 #pragma region Struct
 struct ComInit 
@@ -47,35 +65,136 @@ struct ComInit
     ComInit() { CoInitialize(nullptr); }
     ~ComInit() { CoUninitialize(); }
 };
+
+struct DataType
+{
+    EDATA_TYPE dataType{};
+    bool bIsArray{};
+    std::string metaData{};
+    std::set<std::string> enumSet{};
+};
+
+struct Point
+{
+    uint32 x{};
+    uint32 y{};
+
+    Point():x(0),y(0){}
+    Point(int32 _X,int32 _Y) :x(_X), y(_Y) {}
+    Point(const Point& _Other):x(_Other.x),y(_Other.y){}
+    Point(Point&& _Other)noexcept:x(std::move(_Other.x)),y(std::move(_Other.y)){}
+    Point& operator=(const Point& _Other) { x = _Other.x; y = _Other.y; return *this; }
+    Point& operator=(Point&& _Other)noexcept { x = std::move(_Other.x); y = std::move(_Other.y); return *this; }
+};
+
+struct LineInfo
+{
+    ELINE_TYPE type{};
+    uint32 lineIdx{};
+    uint32 start{};
+    uint32 end{};
+    uint32 GetCount()const { return end - start; }
+
+    bool operator==(const LineInfo& _Other) const { return type == _Other.type && lineIdx == _Other.lineIdx && start == _Other.start && end == _Other.end; }
+};
+
+struct SheetMetaData
+{
+    std::vector<EUSES> usesList{};
+    std::vector<DataType> dataTypeList{};
+};
+
+struct SheetInfo
+{
+    Point rightBottom{};
+    LineInfo idRow{};
+    LineInfo dataTypeRow{};
+    LineInfo usesRow{};
+    SheetMetaData metaData{};
+    std::vector<std::vector<std::string>> csv{};
+};
+
+// 해시 생성
+namespace std 
+{
+    template <>
+    struct hash<LineInfo> 
+    {
+        size_t operator()(const LineInfo& li) const noexcept 
+        {
+            using std::hash;
+            size_t h1 = hash<uint8_t>()(static_cast<uint8_t>(li.type));
+            size_t h2 = hash<uint32_t>()(li.lineIdx);
+            size_t h3 = hash<uint32_t>()(li.start);
+            size_t h4 = hash<uint32_t>()(li.end);
+
+            size_t res{ h1 };
+            res ^= (h2 << 1);
+            res ^= (h3 << 2);
+            res ^= (h4 << 3);
+            return res;
+        }
+    };
+}
 #pragma endregion Struct
 
 #pragma region Preprocess
 #ifdef _DEBUG
-#define LOG_LINE std::wcout << __FUNCTION__ << "(" << __LINE__ << ") ";
+#define LOG_LINE std::cout << __FUNCTION__ << "(" << __LINE__ << ") ";
 #else
 #define LOG_LINE ((void)0)
 #endif
-#define LOG(str, ...) LOG_LINE; wprintf_s(TEXT(str), ##__VA_ARGS__);std::wcout << std::endl
+#define LOG(str, ...) LOG_LINE; printf_s(str, ##__VA_ARGS__);std::cout << std::endl
 #define CHECK(expr, ret, str) if(!(expr)) {LOG(str); return ret;}
-#define END_OF_PROGRAM(ret) std::wcout << TEXT("Please Press Any Key"); while (true) if (_kbhit()) break; return ret
-#define TYPE(container) decltype(*container.data())
+#define END_OF_PROGRAM(ret) std::cout << "Please Press Any Key"; while (true) if (_kbhit()) break; return ret
 #pragma endregion Preprocess
 
-#pragma region Global
+#pragma region Value
 namespace GLOBAL
 {
-    extern const std::string SERVER_POST_FIX_NAME;
-    extern const std::string CLIENT_POST_FIX_NAME;
+    extern const std::string SERVER_POST_FIX;
+    extern const std::string CLIENT_POST_FIX;
+    extern const std::string CSV_POST_FIX;
     extern const std::string CSV_OUTPUT_DIR_FILE_NAME;
+    extern const std::string ERROR_NAME;
+    extern const std::string COMMENT;
+
+    extern std::string ADDITIONAL_PATH;
     extern std::string CURRENT_DIR;
+    extern std::string OUT_PUT_DIR;
 }
-#pragma endregion Global
+
+namespace USES
+{
+    extern const std::string ALL;
+    extern const std::string CLIENT;
+    extern const std::string SERVER;
+}
+
+namespace DATA_TYPE
+{
+    extern const std::string INT;
+    extern const std::string FLOAT;
+    extern const std::string ENUM;
+    extern const std::string STRING;
+    extern const std::string ARRAY;
+    extern const std::string META_DATA_FLAG;
+}
+#pragma endregion Value
 
 #pragma region Function
 bool InitSystem();
 void NormalizeDir(std::string& _Path);
 std::wstring UTF8ToWstring(const std::string& _UTF8);
 std::string WstringToUTF8(const std::wstring& _UTF16);
+std::string UsesToString(EUSES _Uses);
+std::string DataTypeToString(const DataType& _DataType);
+EUSES StringToUses(const std::string& _Uses);
+DataType StringToDataType(std::string _DataType);
+void ToLower(std::string& _Str);
+void ToUpper(std::string& _Str);
+bool CompareIgnoreCase(std::string _Lhs, std::string _Rhs);
+void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet);
 template<class _Dst, class _Src>
 _Dst ConvertString(const _Src& String)
 {

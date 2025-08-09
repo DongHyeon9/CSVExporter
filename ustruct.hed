@@ -1,0 +1,7 @@
+USTRUCT(BlueprintType, Atomic)
+struct F[StructName]
+{
+	GENERATED_BODY()
+
+	[StructVariables]
+};

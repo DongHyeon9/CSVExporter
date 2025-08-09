@@ -2,21 +2,8 @@
 
 bool CSVExporter::Init()
 {
-	std::ifstream csvOutputDirFile{ GLOBAL::CSV_OUTPUT_DIR_FILE_NAME.c_str() };
-	if (!csvOutputDirFile.is_open())
-	{
-		LOG("CSV 출력 경로알려주는 %s파일이 없음", ConvertString<std::wstring>(GLOBAL::CSV_OUTPUT_DIR_FILE_NAME).c_str());
-		return false;
-	}
-
-	outputPath = { (std::istreambuf_iterator<char>(csvOutputDirFile)), (std::istreambuf_iterator<char>()) };
-	NormalizeDir(outputPath);
-	
-	LOG("CSV 출력 경로 : %s", ConvertString<std::wstring>(outputPath).c_str());
-
-	csvOutputDirFile.close();
-	CHECK(OpenFolderPicker(), false, "폴더 선택 실패");
-	LOG("폴더 선택 성공!");
+	CHECK(ReadXlsx(), false, "엑셀 읽기 실패");
+	LOG("엑셀 읽기 성공!");
 
 	return true;
 }
@@ -25,41 +12,45 @@ bool CSVExporter::Execute()
 {
 	for (const auto& targetFile : targetFiles)
 	{
-		WriteCSV(ConvertString<std::string>(targetFile));
-
+		CHECK(MakeCSV(targetFile), false, "CSV 생성 실패");
 	}
 
 	return true;
 }
 
-bool CSVExporter::WriteCSV(std::string _Path)
+bool CSVExporter::MakeCSV(std::string _Path)
 {
 	std::string targetPath{ std::move(_Path) };
-	document.open(targetPath);
 
 	const size_t fileNameStart{ targetPath.find_last_of('\\') + 1 };
 	const size_t fileNameEnd{ targetPath.find_last_of('.') };
-	std::string outputFileName{ targetPath.begin() + fileNameStart ,targetPath.begin() + fileNameEnd };
-	outputFileName += ".csv";
-	std::string finalFilePath{ GLOBAL::CURRENT_DIR + outputPath + outputFileName };
-	LOG("출력 파일 이름 : %s", ConvertString<std::wstring>(finalFilePath).c_str());
+	std::string baseFilename{ targetPath.begin() + fileNameStart ,targetPath.begin() + fileNameEnd };
+	LOG("========== Parse : %s ==========", baseFilename.c_str());
 
-	std::filesystem::path path(finalFilePath);
-	if (path.has_parent_path())
-		std::filesystem::create_directories(path.parent_path());
+	OpenXLSX::XLDocument document{};
+	document.open(targetPath);
 
-	// TODO
-	// 내용읽어들여서 Server, Client 따로 CSV 쓰기
+	auto workBook{ document.workbook() };
+	const std::vector<std::string>& sheetNames{ workBook.sheetNames() };
+	for (const auto& sheetName : sheetNames)
+	{
+		std::string outputFileName{ baseFilename + '_' + sheetName };
+		std::string outputFileName_Server{ outputFileName + GLOBAL::SERVER_POST_FIX };
+		std::string outputFileName_Client{ outputFileName + GLOBAL::CLIENT_POST_FIX };
 
-	std::ofstream outFile{ finalFilePath.c_str() };
-	outFile << "bbb";
-	outFile.close();
+		auto workSheet{ workBook.worksheet(sheetName) };
+		auto sheetInfo{ UnparseSheet(workSheet) };
+
+		WirteCSV<EUSES::CLIENT>(sheetInfo, outputFileName_Client);
+		WirteCSV<EUSES::SERVER>(sheetInfo, outputFileName_Server);
+	}
 
 	document.close();
+
 	return true;
 }
 
-bool CSVExporter::OpenFolderPicker()
+bool CSVExporter::ReadXlsx()
 {
 	ComInit com;
 	CComPtr<IFileOpenDialog> dlg;
@@ -97,16 +88,181 @@ bool CSVExporter::OpenFolderPicker()
 		LPWSTR path{};
 		if (SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH, &path)))
 		{
-			targetFiles.emplace_back(path);
+			targetFiles.emplace_back(ConvertString<std::string, std::wstring>(path));
 		}
 		CoTaskMemFree(path);
 	}
 
+#pragma region LOG
+#ifdef _DEBUG
 	LOG("=====선택된 파일 목록=====");
 	for (const auto& targetFile : targetFiles)
 	{
 		LOG("%s", targetFile.c_str());
 	}
+#endif
+#pragma endregion LOG
 
 	return true;
 }
+
+
+SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
+{
+	SheetInfo result{};
+
+	const uint32 rowCnt{ _Sheet.rowCount() };
+	const uint32 colCnt{ _Sheet.columnCount() };
+
+	// 1차 스캔
+	// rightBottom, idRow, dataTypeRow, usesRow
+	bool bIsFindID{};
+	for (uint32 i = 1; i <= colCnt; ++i)
+	{
+		std::vector<std::string> row{};
+		for (uint32 j = 1; j <= rowCnt; ++j)
+		{
+			std::string current{ _Sheet.cell(j, i).getString() };
+			if (current.empty()) continue;
+
+			result.rightBottom.y = max(result.rightBottom.y, j);
+			row.emplace_back(current);
+			if (bIsFindID || !CompareIgnoreCase(current, "ID")) continue;
+
+			bIsFindID = true;
+			result.usesRow.type = ELINE_TYPE::ROW;
+			result.dataTypeRow.type = ELINE_TYPE::ROW;
+			result.idRow.type = ELINE_TYPE::ROW;
+
+			result.usesRow.lineIdx = j - 2;
+			result.dataTypeRow.lineIdx = j - 1;
+			result.idRow.lineIdx = j;
+
+			result.usesRow.end = i;
+			result.dataTypeRow.end = i;
+			result.idRow.end = i;
+
+			result.usesRow.start = i;
+			result.dataTypeRow.start = i;
+			result.idRow.start = i;
+
+			uint32 idx{ i };
+
+			while (!current.empty())
+			{
+				current = _Sheet.cell(j, ++idx).getString();
+				result.idRow.end = max(result.idRow.end, idx);
+				result.dataTypeRow.end = max(result.dataTypeRow.end, idx);
+				result.usesRow.end = max(result.usesRow.end, idx);
+			}
+		}
+		if (row.empty()) continue;
+
+		result.rightBottom.x = max(result.rightBottom.x, i);
+	}
+
+	std::vector<std::string> idData{};
+	idData.reserve(result.idRow.GetCount());
+	result.metaData.dataTypeList.reserve(result.dataTypeRow.GetCount());
+	result.metaData.usesList.reserve(result.usesRow.GetCount());
+	result.csv.reserve(result.rightBottom.y - result.idRow.lineIdx + 1);
+	std::set<uint32> ignoreColumn{};
+
+	// 2차 데이터 파싱
+	// metaData, ID 채우기
+	for (uint32 i = result.idRow.start; i < result.idRow.end; ++i)
+	{
+		std::string currentType{ _Sheet.cell(result.dataTypeRow.lineIdx, i).getString() };
+		std::string currentUses{ _Sheet.cell(result.usesRow.lineIdx, i).getString() };
+		std::string currentID{ _Sheet.cell(result.idRow.lineIdx, i).getString() };
+
+		if (currentType == GLOBAL::COMMENT || currentUses == GLOBAL::COMMENT || currentID == GLOBAL::COMMENT)
+		{
+			ignoreColumn.emplace(i);
+			continue;
+		}
+
+		ToUpper(currentUses);
+
+		DataType type{ StringToDataType(currentType) };
+		EUSES uses{ StringToUses(currentUses) };
+
+		result.metaData.dataTypeList.emplace_back(type);
+		result.metaData.usesList.emplace_back(uses);
+		idData.emplace_back(currentID);
+	}
+	result.csv.emplace_back(idData);
+
+	// 3차 데이터 파싱
+	// csv 채우기
+	for (uint32 i = result.idRow.lineIdx + 1; i <= result.rightBottom.y; ++i)
+	{
+		std::vector<std::string> rowData{};
+		rowData.reserve(result.rightBottom.x - result.idRow.start + 1);
+		uint32 ignoreCnt{};
+		for (uint32 j = result.idRow.start; j <= result.rightBottom.x; ++j)
+		{
+			if (ignoreColumn.find(j) != ignoreColumn.end())
+			{
+				++ignoreCnt;
+				continue;
+			}
+
+			const uint32 colIdx{ j - result.idRow.start - ignoreCnt };
+			std::string current{ _Sheet.cell(i, j).getString() };
+			if (current == GLOBAL::COMMENT) break;
+
+			if (result.metaData.dataTypeList[colIdx].dataType == EDATA_TYPE::INT)
+			{
+				const size_t decimalPointIdx{ current.find('.') };
+				if (decimalPointIdx != std::string::npos)
+					current.erase(decimalPointIdx);
+			}
+			else if (result.metaData.dataTypeList[colIdx].dataType == EDATA_TYPE::ENUM)
+			{
+				UnparseEnumData(current, result.metaData.dataTypeList[colIdx].enumSet);
+			}
+			rowData.emplace_back(current);
+		}
+		if (!rowData.empty())
+			result.csv.emplace_back(rowData);
+	}
+	result.csv[0][0] = "---";
+
+#pragma region LOG
+#ifdef _DEBUG
+	for (const auto& uses : result.metaData.usesList)
+	{
+		std::cout << "\t\t" << UsesToString(uses);
+	}
+	std::cout << std::endl;
+
+	for (const auto& dataType : result.metaData.dataTypeList)
+	{
+		std::cout << "\t\t" << DataTypeToString(dataType);
+	}
+	std::cout << std::endl;
+
+	for (const auto& row : result.csv)
+	{
+		for (const auto& col : row)
+		{
+			std::cout << col;
+		}
+		std::cout << std::endl;
+	}
+
+	for (const auto& dataType : result.metaData.dataTypeList)
+	{
+		LOG("==========Enum : %s==========", DataTypeToString(dataType).c_str());
+		for (const auto& enumString : dataType.enumSet)
+		{
+			LOG("%s", enumString.c_str());
+		}
+	}
+#endif
+#pragma endregion LOG
+
+	return result;
+}
+
