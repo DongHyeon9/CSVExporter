@@ -155,13 +155,19 @@ namespace GLOBAL
     extern const std::string SERVER_POST_FIX;
     extern const std::string CLIENT_POST_FIX;
     extern const std::string CSV_POST_FIX;
-    extern const std::string CSV_OUTPUT_DIR_FILE_NAME;
+
     extern const std::string ERROR_NAME;
     extern const std::string COMMENT;
 
-    extern std::string ADDITIONAL_PATH;
+    extern const std::string EXPORTER_INI_FILE_NAME;
+
     extern std::string CURRENT_DIR;
-    extern std::string OUT_PUT_DIR;
+
+    extern std::string CLIENT_CSV_OUT_PUT_DIR;
+    extern std::string SERVER_CSV_OUT_PUT_DIR;
+
+    extern std::string CLIENT_HEADER_OUT_PUT_DIR;
+    extern std::string SERVER_HEADER_OUT_PUT_DIR;
 }
 
 namespace USES
@@ -184,6 +190,8 @@ namespace DATA_TYPE
 
 #pragma region Function
 bool InitSystem();
+bool CreateClientDir();
+bool CreateServerDir();
 void NormalizeDir(std::string& _Path);
 std::wstring UTF8ToWstring(const std::string& _UTF8);
 std::string WstringToUTF8(const std::wstring& _UTF16);

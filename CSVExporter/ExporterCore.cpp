@@ -1,15 +1,19 @@
 ﻿#include "ExporterCore.h"
 
-std::string GLOBAL::CURRENT_DIR{};
-std::string GLOBAL::ADDITIONAL_PATH{};
-std::string GLOBAL::OUT_PUT_DIR{};
-
 const std::string GLOBAL::SERVER_POST_FIX{ "_Server" };
 const std::string GLOBAL::CLIENT_POST_FIX{ "_Client" };
 const std::string GLOBAL::CSV_POST_FIX{ ".csv" };
-const std::string GLOBAL::CSV_OUTPUT_DIR_FILE_NAME{ "CsvOutputDir.txt" };
+
 const std::string GLOBAL::ERROR_NAME{ "Error" };
 const std::string GLOBAL::COMMENT{ "#" };
+
+const std::string GLOBAL::EXPORTER_INI_FILE_NAME{ "exporter.ini" };
+
+std::string GLOBAL::CLIENT_CSV_OUT_PUT_DIR{};
+std::string GLOBAL::SERVER_CSV_OUT_PUT_DIR{};
+
+std::string GLOBAL::CLIENT_HEADER_OUT_PUT_DIR{};
+std::string GLOBAL::SERVER_HEADER_OUT_PUT_DIR{};
 
 const std::string USES::ALL{ "A" };
 const std::string USES::CLIENT{ "C" };
@@ -28,26 +32,41 @@ bool InitSystem()
 	LOG("언어설정 : 한국");
 
 	GLOBAL::CURRENT_DIR = std::filesystem::current_path().string();
-	NormalizeDir(GLOBAL::CURRENT_DIR);
 	LOG("현재 경로 : %s", GLOBAL::CURRENT_DIR.c_str());
 
-	std::ifstream csvOutputDirFile{ GLOBAL::CSV_OUTPUT_DIR_FILE_NAME.c_str() };
+	GLOBAL::SERVER_CSV_OUT_PUT_DIR = GLOBAL::CURRENT_DIR;
+	GLOBAL::CLIENT_CSV_OUT_PUT_DIR = GLOBAL::CURRENT_DIR;
+
+	GLOBAL::CLIENT_CSV_OUT_PUT_DIR.erase(GLOBAL::CURRENT_DIR.find_last_of("/"));
+	NormalizeDir(GLOBAL::CLIENT_CSV_OUT_PUT_DIR);
+
+	std::ifstream csvOutputDirFile{ GLOBAL::CLIENT_CSV_OUTPUT_DIR_FILE_NAME.c_str() };
 	if (!csvOutputDirFile.is_open())
 	{
-		LOG("CSV 출력 경로알려주는 %s파일이 없음", GLOBAL::CSV_OUTPUT_DIR_FILE_NAME.c_str());
+		LOG("CSV 출력 경로알려주는 %s파일이 없음", GLOBAL::CLIENT_CSV_OUTPUT_DIR_FILE_NAME.c_str());
 		return false;
 	}
 
-	GLOBAL::ADDITIONAL_PATH = { (std::istreambuf_iterator<char>(csvOutputDirFile)), (std::istreambuf_iterator<char>()) };
-	NormalizeDir(GLOBAL::ADDITIONAL_PATH);
+	GLOBAL::CLIENT_CSV_ADDITIONAL_DIR = { (std::istreambuf_iterator<char>(csvOutputDirFile)), (std::istreambuf_iterator<char>()) };
+	NormalizeDir(GLOBAL::CLIENT_CSV_ADDITIONAL_DIR);
 
-	LOG("CSV 출력 경로 : %s", GLOBAL::ADDITIONAL_PATH.c_str());
+	LOG("CSV 출력 경로 : %s", GLOBAL::CLIENT_CSV_ADDITIONAL_DIR.c_str());
 
 	csvOutputDirFile.close();
 
-	GLOBAL::OUT_PUT_DIR = GLOBAL::CURRENT_DIR + GLOBAL::ADDITIONAL_PATH;
+	GLOBAL::CLIENT_CSV_OUT_PUT_DIR += GLOBAL::CLIENT_CSV_ADDITIONAL_DIR;
 
 	LOG("시스템 초기화 성공!");
+	return true;
+}
+
+bool CreateClientDir()
+{
+	return true;
+}
+
+bool CreateServerDir()
+{
 	return true;
 }
 

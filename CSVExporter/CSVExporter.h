@@ -27,7 +27,7 @@ private:
 	void WirteCSV(const SheetInfo& _SheetInfo, std::string _FileName)
 	{
 		_FileName += GLOBAL::CSV_POST_FIX;
-		std::string finalOutPath{ GLOBAL::OUT_PUT_DIR + std::move(_FileName) };
+		std::string finalOutPath{ GLOBAL::CLIENT_CSV_OUT_PUT_DIR + std::move(_FileName) };
 
 		std::filesystem::path path(finalOutPath);
 		if (path.has_parent_path())
