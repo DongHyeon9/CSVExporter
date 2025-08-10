@@ -114,6 +114,9 @@
     <ClCompile Include="..\Thirdparty\OpenXLSX\external\pugixml\pugixml.cpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
     </ClCompile>
+    <ClCompile Include="SystemManager.cpp">
+      <Filter>Main\Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVExporter.h">
@@ -289,6 +292,9 @@
     </ClInclude>
     <ClInclude Include="..\Thirdparty\OpenXLSX\headers\XLZipArchive.hpp">
       <Filter>ThirdParty\OpenXLSX</Filter>
+    </ClInclude>
+    <ClInclude Include="SystemManager.h">
+      <Filter>Main\Class</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

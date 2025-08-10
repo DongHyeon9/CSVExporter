@@ -1,7 +1,7 @@
 USTRUCT(BlueprintType, Atomic)
-struct F[StructName]
+struct F{StructName}
 {
 	GENERATED_BODY()
 
-	[StructVariables]
+	{StructVariables}
 };

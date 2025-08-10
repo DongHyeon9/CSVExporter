@@ -1,5 +1,9 @@
 ﻿#pragma once
 
+#pragma warning( disable : 4083 )
+#pragma warning( disable : 4819 )
+#pragma warning( disable : 4996 )
+
 #pragma region Header
 #include <iostream>
 #include <map>
@@ -37,104 +41,141 @@ using uint64 = unsigned __int64;
 #pragma endregion Type
 
 #pragma region Enum
+
+enum EDIR_FLAG
+{
+	CURRENT		=		1 << 1,
+	OUTPUT		=		1 << 2,
+
+	CSV			=		1 << 3,
+	HEADER		=		1 << 4,
+	FORMAT		=		1 << 5,
+
+	CLIENT		=		1 << 6,
+	SERVER		=		1 << 7,
+};
+
+enum class EHEADER_FORMAT : uint8
+{
+	ENUM = 0,
+	STRUCT,
+	PRE_PROCESS,
+	DATA_TYPE,
+
+	END,
+};
+
 enum class EDATA_TYPE : uint8
 {
-    INT,
-    FLOAT,
-    STRING,
-    ENUM,
+	INT=1<<1,
+	FLOAT=1<<2,
+	STRING=1<<3,
+	ENUM=1<<4,
 };
 
 enum class EUSES : uint8
 {
-    ALL,
-    CLIENT,
-    SERVER,
+	ALL,
+	CLIENT,
+	SERVER,
 };
 
 enum class ELINE_TYPE : uint8
 {
-    ROW,
-    COLUMN,
+	ROW,
+	COLUMN,
 };
 #pragma endregion Enum
 
 #pragma region Struct
-struct ComInit 
+struct ComInit
 {
-    ComInit() { CoInitialize(nullptr); }
-    ~ComInit() { CoUninitialize(); }
+	ComInit() { CoInitialize(nullptr); }
+	~ComInit() { CoUninitialize(); }
 };
 
 struct DataType
 {
-    EDATA_TYPE dataType{};
-    bool bIsArray{};
-    std::string metaData{};
-    std::set<std::string> enumSet{};
+	EDATA_TYPE dataType{};
+	bool bIsArray{};
+	std::string metaData{};
+	std::set<std::string> enumSet{};
 };
 
 struct Point
 {
-    uint32 x{};
-    uint32 y{};
+	uint32 x{};
+	uint32 y{};
 
-    Point():x(0),y(0){}
-    Point(int32 _X,int32 _Y) :x(_X), y(_Y) {}
-    Point(const Point& _Other):x(_Other.x),y(_Other.y){}
-    Point(Point&& _Other)noexcept:x(std::move(_Other.x)),y(std::move(_Other.y)){}
-    Point& operator=(const Point& _Other) { x = _Other.x; y = _Other.y; return *this; }
-    Point& operator=(Point&& _Other)noexcept { x = std::move(_Other.x); y = std::move(_Other.y); return *this; }
+	Point() :x(0), y(0) {}
+	Point(int32 _X, int32 _Y) :x(_X), y(_Y) {}
+	Point(const Point& _Other) :x(_Other.x), y(_Other.y) {}
+	Point(Point&& _Other)noexcept :x(std::move(_Other.x)), y(std::move(_Other.y)) {}
+	Point& operator=(const Point& _Other) { x = _Other.x; y = _Other.y; return *this; }
+	Point& operator=(Point&& _Other)noexcept { x = std::move(_Other.x); y = std::move(_Other.y); return *this; }
 };
 
 struct LineInfo
 {
-    ELINE_TYPE type{};
-    uint32 lineIdx{};
-    uint32 start{};
-    uint32 end{};
-    uint32 GetCount()const { return end - start; }
+	ELINE_TYPE type{};
+	uint32 lineIdx{};
+	uint32 start{};
+	uint32 end{};
+	uint32 GetCount()const { return end - start; }
 
-    bool operator==(const LineInfo& _Other) const { return type == _Other.type && lineIdx == _Other.lineIdx && start == _Other.start && end == _Other.end; }
+	bool operator==(const LineInfo& _Other) const { return type == _Other.type && lineIdx == _Other.lineIdx && start == _Other.start && end == _Other.end; }
 };
 
 struct SheetMetaData
 {
-    std::vector<EUSES> usesList{};
-    std::vector<DataType> dataTypeList{};
+	std::vector<EUSES> usesList{};
+	std::vector<DataType> dataTypeList{};
 };
 
 struct SheetInfo
 {
-    Point rightBottom{};
-    LineInfo idRow{};
-    LineInfo dataTypeRow{};
-    LineInfo usesRow{};
-    SheetMetaData metaData{};
-    std::vector<std::vector<std::string>> csv{};
+	Point rightBottom{};
+	LineInfo idRow{};
+	LineInfo dataTypeRow{};
+	LineInfo usesRow{};
+	SheetMetaData metaData{};
+	std::vector<std::vector<std::string>> csv{};
 };
 
 // 해시 생성
-namespace std 
+namespace std
 {
-    template <>
-    struct hash<LineInfo> 
-    {
-        size_t operator()(const LineInfo& li) const noexcept 
-        {
-            using std::hash;
-            size_t h1 = hash<uint8_t>()(static_cast<uint8_t>(li.type));
-            size_t h2 = hash<uint32_t>()(li.lineIdx);
-            size_t h3 = hash<uint32_t>()(li.start);
-            size_t h4 = hash<uint32_t>()(li.end);
+	template <>
+	struct hash<LineInfo>
+	{
+		size_t operator()(const LineInfo& _Ref) const noexcept
+		{
+			using std::hash;
+			size_t h1 = hash<uint8>()(static_cast<uint8>(_Ref.type));
+			size_t h2 = hash<uint32>()(_Ref.lineIdx);
+			size_t h3 = hash<uint32>()(_Ref.start);
+			size_t h4 = hash<uint32>()(_Ref.end);
 
-            size_t res{ h1 };
-            res ^= (h2 << 1);
-            res ^= (h3 << 2);
-            res ^= (h4 << 3);
-            return res;
-        }
-    };
+			size_t res{ h1 };
+			res ^= (h2 << 1);
+			res ^= (h3 << 2);
+			res ^= (h4 << 3);
+			return res;
+		}
+	};
+
+	template <>
+	struct hash<DataType>
+	{
+		size_t operator()(const DataType& _Ref) const noexcept
+		{
+			using std::hash;
+			size_t h1 = hash<uint32>()(static_cast<uint32>(_Ref.dataType));
+			size_t h2 = hash<uint32>()(_Ref.bIsArray);
+
+			return h1 | h2;
+		}
+	};
 }
 #pragma endregion Struct
 
@@ -152,46 +193,51 @@ namespace std
 #pragma region Value
 namespace GLOBAL
 {
-    extern const std::string SERVER_POST_FIX;
-    extern const std::string CLIENT_POST_FIX;
-    extern const std::string CSV_POST_FIX;
+	extern const std::string SERVER_POST_FIX;
+	extern const std::string CLIENT_POST_FIX;
+	extern const std::string CSV_POST_FIX;
 
-    extern const std::string ERROR_NAME;
-    extern const std::string COMMENT;
+	extern const std::string ERROR_NAME;
+	extern const std::string COMMENT;
+}
 
-    extern const std::string EXPORTER_INI_FILE_NAME;
+namespace INIT
+{
+	extern const std::string EXPORTER_INI_FILE_NAME;
 
-    extern std::string CURRENT_DIR;
+	extern const std::string PROJECT_NAME_FLAG;
+	extern const std::unordered_map<int32, std::string> OUTDIR_FLAG_MAP;
+}
 
-    extern std::string CLIENT_CSV_OUT_PUT_DIR;
-    extern std::string SERVER_CSV_OUT_PUT_DIR;
+namespace MARK
+{
+	extern const std::string PROJECT_NAME;
+}
 
-    extern std::string CLIENT_HEADER_OUT_PUT_DIR;
-    extern std::string SERVER_HEADER_OUT_PUT_DIR;
+namespace HEADER_GEN
+{
+	extern const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> FORMAT_FILE_NAMES;
 }
 
 namespace USES
 {
-    extern const std::string ALL;
-    extern const std::string CLIENT;
-    extern const std::string SERVER;
+	extern const std::string ALL;
+	extern const std::string CLIENT;
+	extern const std::string SERVER;
 }
 
 namespace DATA_TYPE
 {
-    extern const std::string INT;
-    extern const std::string FLOAT;
-    extern const std::string ENUM;
-    extern const std::string STRING;
-    extern const std::string ARRAY;
-    extern const std::string META_DATA_FLAG;
+	extern const std::string INT;
+	extern const std::string FLOAT;
+	extern const std::string ENUM;
+	extern const std::string STRING;
+	extern const std::string ARRAY;
+	extern const std::string META_DATA_FLAG;
 }
 #pragma endregion Value
 
 #pragma region Function
-bool InitSystem();
-bool CreateClientDir();
-bool CreateServerDir();
 void NormalizeDir(std::string& _Path);
 std::wstring UTF8ToWstring(const std::string& _UTF8);
 std::string WstringToUTF8(const std::wstring& _UTF16);
@@ -203,16 +249,19 @@ void ToLower(std::string& _Str);
 void ToUpper(std::string& _Str);
 bool CompareIgnoreCase(std::string _Lhs, std::string _Rhs);
 void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet);
+std::string ToScreamingSnake(const std::string& _Input);
+void ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To);
+void ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap);
 template<class _Dst, class _Src>
 _Dst ConvertString(const _Src& String)
 {
 	if constexpr (std::is_same_v<_Dst, _Src>)
 		return String;
 
-    if constexpr (std::is_same_v<_Dst, std::wstring> && std::is_same_v<_Src, std::string>)
-        return UTF8ToWstring(String);
+	if constexpr (std::is_same_v<_Dst, std::wstring> && std::is_same_v<_Src, std::string>)
+		return UTF8ToWstring(String);
 
-    else if constexpr (std::is_same_v<_Dst, std::string> && std::is_same_v<_Src, std::wstring>)
-        return WstringToUTF8(String);
+	else if constexpr (std::is_same_v<_Dst, std::string> && std::is_same_v<_Src, std::wstring>)
+		return WstringToUTF8(String);
 }
 #pragma endregion Function

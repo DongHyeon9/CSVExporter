@@ -1,4 +1,5 @@
 ﻿#include "CSVExporter.h"
+#include "HeaderGenerater.h"
 
 bool CSVExporter::Init()
 {
@@ -28,6 +29,12 @@ bool CSVExporter::MakeCSV(std::string _Path)
 	LOG("========== Parse : %s ==========", baseFilename.c_str());
 
 	OpenXLSX::XLDocument document{};
+	HeaderGenerater clientGenerator{};
+	HeaderGenerater serverGenerator{};
+
+	CHECK(clientGenerator.Init<EUSES::CLIENT>(), false, "클라이언트 헤더 제너레이터 초기화 실패");
+	CHECK(serverGenerator.Init<EUSES::SERVER>(), false, "서버 헤더 제너레이터 초기화 실패");
+
 	document.open(targetPath);
 
 	auto workBook{ document.workbook() };
@@ -40,6 +47,9 @@ bool CSVExporter::MakeCSV(std::string _Path)
 
 		auto workSheet{ workBook.worksheet(sheetName) };
 		auto sheetInfo{ UnparseSheet(workSheet) };
+
+		clientGenerator.Execute(sheetInfo);
+		serverGenerator.Execute(sheetInfo);
 
 		WirteCSV<EUSES::CLIENT>(sheetInfo, outputFileName_Client);
 		WirteCSV<EUSES::SERVER>(sheetInfo, outputFileName_Server);

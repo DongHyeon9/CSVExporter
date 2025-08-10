@@ -1,5 +1,0 @@
-UENUM()
-enum class E[EnumName] : uint16
-{
-	[EnumTypes]
-};

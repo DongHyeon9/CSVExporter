@@ -1,0 +1,4 @@
+struct F{StructName}
+{
+	{StructVariables}
+};

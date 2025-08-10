@@ -1,0 +1,7 @@
+int:int32
+float:float
+string:std::string
+enum:E{EnumName}
+array:std::vector<{DataType}>
+StructVariables:{DataType} {VariableName};
+EnumTypes:{EnumType},

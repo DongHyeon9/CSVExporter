@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "ExporterCore.h"
+#include "SystemManager.h"
 
 class CSVExporter
 {
@@ -27,7 +27,10 @@ private:
 	void WirteCSV(const SheetInfo& _SheetInfo, std::string _FileName)
 	{
 		_FileName += GLOBAL::CSV_POST_FIX;
-		std::string finalOutPath{ GLOBAL::CLIENT_CSV_OUT_PUT_DIR + std::move(_FileName) };
+		std::string finalOutPath{};
+		if constexpr (_USES == EUSES::SERVER)			finalOutPath = SystemManager::GetInstance()->GetDir(EDIR_FLAG::CSV | EDIR_FLAG::OUTPUT | EDIR_FLAG::SERVER) + std::move(_FileName);
+		else if constexpr (_USES == EUSES::CLIENT)		finalOutPath = SystemManager::GetInstance()->GetDir(EDIR_FLAG::CSV | EDIR_FLAG::OUTPUT | EDIR_FLAG::CLIENT) + std::move(_FileName);
+		else											finalOutPath = SystemManager::GetInstance()->GetCurrentDir() + std::move(_FileName);
 
 		std::filesystem::path path(finalOutPath);
 		if (path.has_parent_path())
@@ -39,11 +42,27 @@ private:
 			for (size_t j = 0; j < _SheetInfo.csv[i].size(); ++j)
 			{
 				if (_SheetInfo.metaData.usesList[j] != EUSES::ALL && _SheetInfo.metaData.usesList[j] != _USES) continue;
-				std::string front{ _SheetInfo.metaData.dataTypeList[j].bIsArray ? "\"(" : "\"" };
-				std::string back{ _SheetInfo.metaData.dataTypeList[j].bIsArray ? ")\"" : "\"" };
+
+				std::string prefix{};
+				std::string postfix{};
+
+				if constexpr (_USES == EUSES::SERVER)
+				{
+					if (_SheetInfo.metaData.dataTypeList[j].bIsArray)
+					{
+						prefix = "(";
+						postfix = ")";
+					}
+				}
+				else if constexpr (_USES == EUSES::CLIENT)
+				{
+					prefix = _SheetInfo.metaData.dataTypeList[j].bIsArray ? "\"(" : "\"";
+					postfix = _SheetInfo.metaData.dataTypeList[j].bIsArray ? ")\"" : "\"";
+				}
+
 				if (i != 0)
 				{
-					outFile << front << _SheetInfo.csv[i][j] << back;
+					outFile << prefix << _SheetInfo.csv[i][j] << postfix;
 				}
 				else
 				{
