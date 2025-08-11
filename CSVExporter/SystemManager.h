@@ -16,6 +16,7 @@ public:
 
 private:
 	void UnparseInitFile(const std::string& _File, std::unordered_map<std::string, std::string>& _SystemInit);
+	std::string CombineDir(std::string _Base, std::string _Additional);
 
 private:
 	SystemManager(){}

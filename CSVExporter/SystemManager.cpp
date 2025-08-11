@@ -31,15 +31,7 @@ bool SystemManager::Init()
     dirMap.reserve(INIT::OUTDIR_FLAG_MAP.bucket_count() + dirMap.bucket_count());
     for (const auto& flagPair : INIT::OUTDIR_FLAG_MAP)
     {
-        std::string baseDir{ dirMap[EDIR_FLAG::CURRENT] };
-        if (flagPair.first & EDIR_FLAG::CLIENT &&
-            !(flagPair.first & EDIR_FLAG::FORMAT))
-        {
-            baseDir.erase(baseDir.find_last_of("\\"));
-        }
-        ExporterUtils::NormalizeDir(baseDir);
-
-        dirMap.emplace(flagPair.first, baseDir + systemInit[flagPair.second]);
+        dirMap.emplace(flagPair.first, CombineDir(dirMap[EDIR_FLAG::CURRENT], systemInit[flagPair.second]));
     }
 
     initFile.close();
@@ -100,4 +92,32 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
             }
         }
     }
+}
+
+std::string SystemManager::CombineDir(std::string _Base, std::string _Additional)
+{
+    std::filesystem::path basePath{ std::move(_Base) };
+    std::filesystem::path addPath{ std::move(_Additional) };
+
+    // Normalize 추가 경로: lexically_normal 은 존재 여부와 상관없이 문자열 수준에서 정리합니다
+    addPath = addPath.lexically_normal();
+    // 또는 실존경로 기반 정리가 필요하면 weakly_canonical 사용 가능
+    // addPath = fs::weakly_canonical(addPath);
+
+    std::filesystem::path result{ basePath };
+
+    // "../" 갯수만큼 상위 디렉토리로 이동
+    for (const auto& part : addPath) {
+        if (part == "..") {
+            result = result.parent_path();
+        }
+        else if (part == ".") {
+            continue;
+        }
+        else {
+            result /= part;
+        }
+    }
+
+    return result.string();
 }
