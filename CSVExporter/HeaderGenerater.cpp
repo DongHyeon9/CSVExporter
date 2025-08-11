@@ -3,14 +3,11 @@
 void HeaderGenerater::Execute()
 {
 	std::string preprocessFile{ CreatePreprocess() };
-	std::vector<std::string> enumTypesFiles{ CreateEnum() };
-	std::string structFile{ CreateStruct() };
+	std::unordered_map<DataType, std::string> enumNames{};
+	std::vector<std::string> enumTypesFiles{ CreateEnum(enumNames) };
+	std::string structFile{ CreateStruct(enumNames) };
 
 	std::ofstream outFile{ fileOutPath.c_str() };
-	for (const auto& file : formats)
-	{
-		outFile << file;
-	}
 	outFile << preprocessFile;
 	for (const auto& enumType : enumTypesFiles)
 	{
@@ -22,15 +19,43 @@ void HeaderGenerater::Execute()
 
 std::string HeaderGenerater::CreatePreprocess()
 {
-	return std::string();
+	std::string result{ formats[static_cast<int32>(EHEADER_FORMAT::PRE_PROCESS)] };
+	ExporterUtils::ReplaceString(result, MARK::FILE_NAME, fileName);
+	return result;
 }
 
-std::vector<std::string> HeaderGenerater::CreateEnum()
+std::vector<std::string> HeaderGenerater::CreateEnum(std::unordered_map<DataType, std::string>& _OutEnumNames)
 {
-	return std::vector<std::string>();
+	std::vector<std::string> result{};
+
+	for (const auto& dataType : metaData.dataTypeList)
+	{
+		if (dataType.dataType != EDATA_TYPE::ENUM) continue;
+
+		std::string enumName{ dataTypeFormats[EDATA_FORMAT::ENUM] };
+		ExporterUtils::ReplaceString(enumName, MARK::ENUM_NAME, dataType.metaData);
+
+		_OutEnumNames.emplace(std::pair<DataType, std::string>{ dataType ,enumName });
+
+		std::string enumFile{ formats[static_cast<int32>(EHEADER_FORMAT::ENUM)] };
+		std::string enumMembers{};
+
+		for (const auto& em : dataType.enumSet)
+		{
+			std::string enumMember{ dataTypeFormats[EDATA_FORMAT::ENUM_MEMBER] };
+			ExporterUtils::ReplaceString(enumMember, MARK::ENUM_MEMBER, em);
+			enumMembers += enumMember + "\n\t";
+		}
+
+		enumMembers.erase(enumMembers.find_last_of("\n"));
+		ExporterUtils::ReplaceString(enumFile, { {MARK::ENUM_NAME, enumName}, { MARK::ENUM_TYPES,enumMembers } });
+		result.emplace_back(enumFile);
+	}
+
+	return result;
 }
 
-std::string HeaderGenerater::CreateStruct()
+std::string HeaderGenerater::CreateStruct(const std::unordered_map<DataType, std::string>& _EnumNames)
 {
 	return std::string();
 }

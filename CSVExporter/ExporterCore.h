@@ -100,6 +100,11 @@ struct DataType
 	bool bIsArray{};
 	std::string metaData{};
 	std::set<std::string> enumSet{};
+
+	bool operator==(const DataType& _Ref) const
+	{
+		return dataType == _Ref.dataType && metaData == _Ref.metaData && bIsArray == _Ref.bIsArray;
+	}
 };
 
 struct Point
@@ -213,6 +218,10 @@ namespace INIT
 namespace MARK
 {
 	extern const std::string PROJECT_NAME;
+	extern const std::string FILE_NAME;
+	extern const std::string ENUM_NAME;
+	extern const std::string ENUM_MEMBER;
+	extern const std::string ENUM_TYPES;
 }
 
 namespace HEADER_GEN

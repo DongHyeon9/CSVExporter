@@ -24,6 +24,10 @@ const std::unordered_map<int32, std::string> INIT::OUTDIR_FLAG_MAP
 };
 
 const std::string MARK::PROJECT_NAME{ "{ProjectName}" };
+const std::string MARK::FILE_NAME{ "{FileName}" };
+const std::string MARK::ENUM_NAME{ "{EnumName}" };
+const std::string MARK::ENUM_MEMBER{ "{EnumMember}" };
+const std::string MARK::ENUM_TYPES{ "{EnumTypes}" };
 
 const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> HEADER_GEN::FORMAT_FILE_NAMES
 {

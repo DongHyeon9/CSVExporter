@@ -3,5 +3,5 @@ float:float
 string:std::string
 enum:E{EnumName}
 array:std::vector<{DataType}>
-StructVar:{DataType} {VariableName};
-EnumMember:{EnumType},
+structVar:{DataType} {VariableName};
+enumMember:{EnumMember},

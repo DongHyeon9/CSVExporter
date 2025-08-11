@@ -108,6 +108,6 @@ protected:
 
 private:
 	std::string CreatePreprocess();
-	std::vector<std::string> CreateEnum();
-	std::string CreateStruct();
+	std::vector<std::string> CreateEnum(std::unordered_map<DataType, std::string>& _OutEnumNames);
+	std::string CreateStruct(const std::unordered_map<DataType, std::string>& _EnumNames);
 };
