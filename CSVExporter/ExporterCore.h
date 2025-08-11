@@ -67,10 +67,11 @@ enum class EHEADER_FORMAT : uint8
 
 enum class EDATA_TYPE : uint8
 {
-	INT=1<<1,
-	FLOAT=1<<2,
-	STRING=1<<3,
-	ENUM=1<<4,
+	//data_type.fmt와 순서를 맞춰줘야됨
+	INT=0,
+	FLOAT,
+	STRING,
+	ENUM,
 };
 
 enum class EUSES : uint8
@@ -98,6 +99,7 @@ struct DataType
 {
 	EDATA_TYPE dataType{};
 	bool bIsArray{};
+	std::string variableName{};
 	std::string metaData{};
 	std::set<std::string> enumSet{};
 
@@ -205,6 +207,8 @@ namespace GLOBAL
 
 	extern const std::string ERROR_NAME;
 	extern const std::string COMMENT;
+
+	extern const std::string ENUM_END;
 }
 
 namespace INIT
@@ -222,6 +226,10 @@ namespace MARK
 	extern const std::string ENUM_NAME;
 	extern const std::string ENUM_MEMBER;
 	extern const std::string ENUM_TYPES;
+	extern const std::string STRUCT_NAME;
+	extern const std::string STRUCT_VARIABLES;
+	extern const std::string DATA_TYPE;
+	extern const std::string VAR_NAME;
 }
 
 namespace HEADER_GEN

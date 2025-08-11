@@ -33,7 +33,7 @@ std::vector<std::string> HeaderGenerater::CreateEnum(std::unordered_map<DataType
 		if (dataType.dataType != EDATA_TYPE::ENUM) continue;
 
 		std::string enumName{ dataTypeFormats[EDATA_FORMAT::ENUM] };
-		ExporterUtils::ReplaceString(enumName, MARK::ENUM_NAME, dataType.metaData);
+		ExporterUtils::ReplaceString(enumName, MARK::ENUM_NAME, ExporterUtils::ToScreamingSnake(fileName) + "_" + dataType.metaData);
 
 		_OutEnumNames.emplace(std::pair<DataType, std::string>{ dataType ,enumName });
 
@@ -47,7 +47,7 @@ std::vector<std::string> HeaderGenerater::CreateEnum(std::unordered_map<DataType
 			enumMembers += enumMember + "\n\t";
 		}
 
-		enumMembers.erase(enumMembers.find_last_of("\n"));
+		enumMembers += GLOBAL::ENUM_END;
 		ExporterUtils::ReplaceString(enumFile, { {MARK::ENUM_NAME, enumName}, { MARK::ENUM_TYPES,enumMembers } });
 		result.emplace_back(enumFile);
 	}
@@ -57,6 +57,32 @@ std::vector<std::string> HeaderGenerater::CreateEnum(std::unordered_map<DataType
 
 std::string HeaderGenerater::CreateStruct(const std::unordered_map<DataType, std::string>& _EnumNames)
 {
-	return std::string();
+	std::string result{ formats[static_cast<int32>(EHEADER_FORMAT::STRUCT)] };
+	ExporterUtils::ReplaceString(result, MARK::STRUCT_NAME, fileName);
+
+	std::string structFile{};
+	for (size_t i = 1; i < metaData.dataTypeList.size(); ++i)
+	{
+		std::string structVar{ dataTypeFormats[EDATA_FORMAT::STRUCT_VAR] };
+		if (metaData.dataTypeList[i].bIsArray)
+			ExporterUtils::ReplaceString(structVar, MARK::DATA_TYPE, dataTypeFormats[EDATA_FORMAT::ARRAY]);
+
+		if (metaData.dataTypeList[i].dataType == EDATA_TYPE::ENUM)
+		{
+			ExporterUtils::ReplaceString(structVar, MARK::DATA_TYPE, _EnumNames.at(metaData.dataTypeList[i]));
+		}
+		else
+		{
+			ExporterUtils::ReplaceString(structVar, MARK::DATA_TYPE, dataTypeFormats[static_cast<int32>(metaData.dataTypeList[i].dataType)]);
+		}
+
+		ExporterUtils::ReplaceString(structVar, MARK::VAR_NAME, metaData.dataTypeList[i].variableName);
+
+		structFile += structVar + "\n\t";
+	}
+
+
+	ExporterUtils::ReplaceString(result, MARK::STRUCT_VARIABLES, structFile);
+	return result;
 }
 

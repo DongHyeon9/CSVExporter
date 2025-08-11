@@ -15,7 +15,7 @@ protected:
 private:
 	enum EDATA_FORMAT
 	{
-		//data_type.fmt와 순서를 맞춰줘야됨
+		// EDATA_TYPE와 순서를 맞춰줘야됨
 		INT = 0,
 		FLOAT,
 		STRING,

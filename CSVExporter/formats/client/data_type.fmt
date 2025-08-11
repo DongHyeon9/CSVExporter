@@ -3,5 +3,5 @@ float:float
 string:FString
 enum:E{EnumName}
 array:TArray<{DataType}>
-structVar:UPROPERTY(EditAnywhere, BlueprintReadOnly) {DataType} {VariableName};
+structVar:UPROPERTY(EditAnywhere, BlueprintReadOnly) {DataType} {VariableName}{};
 enumMember:{EnumMember},

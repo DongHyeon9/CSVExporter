@@ -8,6 +8,8 @@ const std::string GLOBAL::HEADER_POST_FIX{ ".h" };
 const std::string GLOBAL::ERROR_NAME{ "Error" };
 const std::string GLOBAL::COMMENT{ "#" };
 
+const std::string GLOBAL::ENUM_END{ "END" };
+
 const std::string INIT::EXPORTER_INI_FILE_NAME{ "exporter.ini" };
 
 const std::string INIT::PROJECT_NAME_FLAG{ "[ProjectName]" };
@@ -28,6 +30,10 @@ const std::string MARK::FILE_NAME{ "{FileName}" };
 const std::string MARK::ENUM_NAME{ "{EnumName}" };
 const std::string MARK::ENUM_MEMBER{ "{EnumMember}" };
 const std::string MARK::ENUM_TYPES{ "{EnumTypes}" };
+const std::string MARK::STRUCT_NAME{ "{StructName}" };
+const std::string MARK::STRUCT_VARIABLES{ "{StructVariables}" };
+const std::string MARK::DATA_TYPE{ "{DataType}" };
+const std::string MARK::VAR_NAME{ "{VariableName}" };
 
 const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> HEADER_GEN::FORMAT_FILE_NAMES
 {
@@ -184,9 +190,20 @@ void ExporterUtils::UnparseEnumData(std::string _EnumData, std::set<std::string>
 
 std::string ExporterUtils::ToScreamingSnake(const std::string& _Input)
 {
-	std::string result{};
+	//특수문자 제거
+	std::string filtered{};
+	filtered.reserve(_Input.size());
+	for (unsigned char c : _Input) {
+		if (std::isalnum(c)) {
+			filtered.push_back(c);
+		}
+	}
 
-	for (char c : _Input) {
+	//SCREAMING_SNAKE_CASE 변환
+	std::string result{};
+	result.reserve(filtered.size() * 2);
+
+	for (char c : filtered) {
 		if (std::isupper(static_cast<unsigned char>(c))) {
 			if (!result.empty()) {
 				result.push_back('_');
@@ -197,6 +214,7 @@ std::string ExporterUtils::ToScreamingSnake(const std::string& _Input)
 			result.push_back(static_cast<char>(std::toupper(static_cast<unsigned char>(c))));
 		}
 	}
+
 	return result;
 }
 

@@ -191,6 +191,7 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 		ExporterUtils::ToUpper(currentUses);
 
 		DataType type{ ExporterUtils::StringToDataType(currentType) };
+		type.variableName = currentID;
 		EUSES uses{ ExporterUtils::StringToUses(currentUses) };
 
 		result.metaData.dataTypeList.emplace_back(type);
