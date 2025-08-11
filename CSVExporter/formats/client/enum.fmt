@@ -1,5 +1,5 @@
-UENUM()
-enum class E{EnumName} : uint16
+UENUM(BlueprintType)
+enum class {EnumName} : uint8
 {
 	{EnumTypes}
 };

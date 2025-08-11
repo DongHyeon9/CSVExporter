@@ -1,5 +1,5 @@
 USTRUCT(BlueprintType, Atomic)
-struct F{StructName}
+struct F{StructName} : public FTableRowBase 
 {
 	GENERATED_BODY()
 

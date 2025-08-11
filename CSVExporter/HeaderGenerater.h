@@ -1,11 +1,6 @@
 ﻿#pragma once
 #include "SystemManager.h"
 
-// TODO
-// UENUM 생성
-// USTRUCT 생성
-// h파일 생성
-
 class HeaderGenerater
 {
 public:
