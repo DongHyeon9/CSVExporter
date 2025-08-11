@@ -32,9 +32,6 @@ bool CSVExporter::MakeCSV(std::string _Path)
 	HeaderGenerater clientGenerator{};
 	HeaderGenerater serverGenerator{};
 
-	CHECK(clientGenerator.Init<EUSES::CLIENT>(), false, "클라이언트 헤더 제너레이터 초기화 실패");
-	CHECK(serverGenerator.Init<EUSES::SERVER>(), false, "서버 헤더 제너레이터 초기화 실패");
-
 	document.open(targetPath);
 
 	auto workBook{ document.workbook() };
@@ -48,8 +45,11 @@ bool CSVExporter::MakeCSV(std::string _Path)
 		auto workSheet{ workBook.worksheet(sheetName) };
 		auto sheetInfo{ UnparseSheet(workSheet) };
 
-		clientGenerator.Execute(sheetInfo);
-		serverGenerator.Execute(sheetInfo);
+		CHECK(clientGenerator.Init<EUSES::CLIENT>(sheetInfo.metaData, outputFileName), false, "클라이언트 헤더 제너레이터 초기화 실패");
+		CHECK(serverGenerator.Init<EUSES::SERVER>(sheetInfo.metaData, outputFileName), false, "서버 헤더 제너레이터 초기화 실패");
+
+		clientGenerator.Execute();
+		serverGenerator.Execute();
 
 		WirteCSV<EUSES::CLIENT>(sheetInfo, outputFileName_Client);
 		WirteCSV<EUSES::SERVER>(sheetInfo, outputFileName_Server);
@@ -98,20 +98,16 @@ bool CSVExporter::ReadXlsx()
 		LPWSTR path{};
 		if (SUCCEEDED(item->GetDisplayName(SIGDN_FILESYSPATH, &path)))
 		{
-			targetFiles.emplace_back(ConvertString<std::string, std::wstring>(path));
+			targetFiles.emplace_back(ExporterUtils::ConvertString<std::string, std::wstring>(path));
 		}
 		CoTaskMemFree(path);
 	}
 
-#pragma region LOG
-#ifdef _DEBUG
 	LOG("=====선택된 파일 목록=====");
 	for (const auto& targetFile : targetFiles)
 	{
 		LOG("%s", targetFile.c_str());
 	}
-#endif
-#pragma endregion LOG
 
 	return true;
 }
@@ -137,7 +133,7 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 
 			result.rightBottom.y = max(result.rightBottom.y, j);
 			row.emplace_back(current);
-			if (bIsFindID || !CompareIgnoreCase(current, "ID")) continue;
+			if (bIsFindID || !ExporterUtils::CompareIgnoreCase(current, "ID")) continue;
 
 			bIsFindID = true;
 			result.usesRow.type = ELINE_TYPE::ROW;
@@ -192,10 +188,10 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 			continue;
 		}
 
-		ToUpper(currentUses);
+		ExporterUtils::ToUpper(currentUses);
 
-		DataType type{ StringToDataType(currentType) };
-		EUSES uses{ StringToUses(currentUses) };
+		DataType type{ ExporterUtils::StringToDataType(currentType) };
+		EUSES uses{ ExporterUtils::StringToUses(currentUses) };
 
 		result.metaData.dataTypeList.emplace_back(type);
 		result.metaData.usesList.emplace_back(uses);
@@ -230,7 +226,7 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 			}
 			else if (result.metaData.dataTypeList[colIdx].dataType == EDATA_TYPE::ENUM)
 			{
-				UnparseEnumData(current, result.metaData.dataTypeList[colIdx].enumSet);
+				ExporterUtils::UnparseEnumData(current, result.metaData.dataTypeList[colIdx].enumSet);
 			}
 			rowData.emplace_back(current);
 		}
@@ -243,13 +239,13 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 #ifdef _DEBUG
 	for (const auto& uses : result.metaData.usesList)
 	{
-		std::cout << "\t\t" << UsesToString(uses);
+		std::cout << "\t\t" << ExporterUtils::UsesToString(uses);
 	}
 	std::cout << std::endl;
 
 	for (const auto& dataType : result.metaData.dataTypeList)
 	{
-		std::cout << "\t\t" << DataTypeToString(dataType);
+		std::cout << "\t\t" << ExporterUtils::DataTypeToString(dataType);
 	}
 	std::cout << std::endl;
 
@@ -264,7 +260,7 @@ SheetInfo CSVExporter::UnparseSheet(OpenXLSX::XLWorksheet& _Sheet)
 
 	for (const auto& dataType : result.metaData.dataTypeList)
 	{
-		LOG("==========Enum : %s==========", DataTypeToString(dataType).c_str());
+		LOG("==========Enum : %s==========", ExporterUtils::DataTypeToString(dataType).c_str());
 		for (const auto& enumString : dataType.enumSet)
 		{
 			LOG("%s", enumString.c_str());

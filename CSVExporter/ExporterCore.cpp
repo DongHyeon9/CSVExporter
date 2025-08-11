@@ -3,6 +3,7 @@
 const std::string GLOBAL::SERVER_POST_FIX{ "_Server" };
 const std::string GLOBAL::CLIENT_POST_FIX{ "_Client" };
 const std::string GLOBAL::CSV_POST_FIX{ ".csv" };
+const std::string GLOBAL::HEADER_POST_FIX{ ".h" };
 
 const std::string GLOBAL::ERROR_NAME{ "Error" };
 const std::string GLOBAL::COMMENT{ "#" };
@@ -43,13 +44,13 @@ const std::string DATA_TYPE::STRING{ "string" };
 const std::string DATA_TYPE::ARRAY{ "[]" };
 const std::string DATA_TYPE::META_DATA_FLAG{ ":" };
 
-void NormalizeDir(std::string& _Path)
+void ExporterUtils::NormalizeDir(std::string& _Path)
 {
 	if (_Path.back() != '\\')
 		_Path.push_back('\\');
 }
 
-std::wstring UTF8ToWstring(const std::string& _UTF8)
+std::wstring ExporterUtils::UTF8ToWstring(const std::string& _UTF8)
 {
 	if (_UTF8.empty()) return {};
 	int32 sizeNeeded = MultiByteToWideChar(CP_UTF8, 0, _UTF8.data(), (int32)_UTF8.size(), nullptr, 0);
@@ -61,7 +62,7 @@ std::wstring UTF8ToWstring(const std::string& _UTF8)
 	return result;
 }
 
-std::string WstringToUTF8(const std::wstring& _UTF16)
+std::string ExporterUtils::WstringToUTF8(const std::wstring& _UTF16)
 {
 	if (_UTF16.empty()) return {};
 	int32 requiredBytes = WideCharToMultiByte(
@@ -83,7 +84,7 @@ std::string WstringToUTF8(const std::wstring& _UTF16)
 	return utf8;
 }
 
-std::string UsesToString(EUSES _Uses)
+std::string ExporterUtils::UsesToString(EUSES _Uses)
 {
 	switch (_Uses)
 	{
@@ -94,7 +95,7 @@ std::string UsesToString(EUSES _Uses)
 	assert(false);
 }
 
-std::string DataTypeToString(const DataType& _DataType)
+std::string ExporterUtils::DataTypeToString(const DataType& _DataType)
 {
 	std::string result{ GLOBAL::ERROR_NAME };
 	switch (_DataType.dataType)
@@ -109,11 +110,11 @@ std::string DataTypeToString(const DataType& _DataType)
 	return result;
 }
 
-EUSES StringToUses(const std::string& _Uses)
+EUSES ExporterUtils::StringToUses(const std::string& _Uses)
 {
-	if (CompareIgnoreCase(_Uses, USES::CLIENT))					return EUSES::CLIENT;
-	else if (CompareIgnoreCase(_Uses, USES::SERVER))			return EUSES::SERVER;
-	else if (CompareIgnoreCase(_Uses, USES::ALL))				return EUSES::ALL;
+	if (ExporterUtils::CompareIgnoreCase(_Uses, USES::CLIENT))				return EUSES::CLIENT;
+	else if (ExporterUtils::CompareIgnoreCase(_Uses, USES::SERVER))			return EUSES::SERVER;
+	else if (ExporterUtils::CompareIgnoreCase(_Uses, USES::ALL))			return EUSES::ALL;
 	else
 	{
 		LOG("알 수 없는 사용처 : %s", _Uses.c_str());
@@ -121,7 +122,7 @@ EUSES StringToUses(const std::string& _Uses)
 	}
 }
 
-DataType StringToDataType(std::string _DataType)
+DataType ExporterUtils::StringToDataType(std::string _DataType)
 {
 	DataType result{};
 	size_t idx{ _DataType.find(DATA_TYPE::ARRAY) };
@@ -134,14 +135,14 @@ DataType StringToDataType(std::string _DataType)
 	idx = _DataType.find(DATA_TYPE::META_DATA_FLAG);
 	if (idx != std::string::npos)
 	{
-		result.metaData = ToScreamingSnake(_DataType.substr(idx + 1));
+		result.metaData = ExporterUtils::ToScreamingSnake(_DataType.substr(idx + 1));
 		_DataType.erase(idx);
 	}
 
-	if (CompareIgnoreCase(_DataType, DATA_TYPE::STRING))		result.dataType = EDATA_TYPE::STRING;
-	else if (CompareIgnoreCase(_DataType, DATA_TYPE::INT))		result.dataType = EDATA_TYPE::INT;
-	else if (CompareIgnoreCase(_DataType, DATA_TYPE::FLOAT))	result.dataType = EDATA_TYPE::FLOAT;
-	else if (CompareIgnoreCase(_DataType, DATA_TYPE::ENUM))		result.dataType = EDATA_TYPE::ENUM;
+	if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::STRING))			result.dataType = EDATA_TYPE::STRING;
+	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::INT))		result.dataType = EDATA_TYPE::INT;
+	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::FLOAT))		result.dataType = EDATA_TYPE::FLOAT;
+	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::ENUM))		result.dataType = EDATA_TYPE::ENUM;
 	else
 	{
 		LOG("알 수 없는 데이터 타입 : %s", _DataType.c_str());
@@ -151,24 +152,24 @@ DataType StringToDataType(std::string _DataType)
 	return result;
 }
 
-void ToLower(std::string& _Str)
+void ExporterUtils::ToLower(std::string& _Str)
 {
 	std::transform(_Str.begin(), _Str.end(), _Str.begin(), ::tolower);
 }
 
-void ToUpper(std::string& _Str)
+void ExporterUtils::ToUpper(std::string& _Str)
 {
 	std::transform(_Str.begin(), _Str.end(), _Str.begin(), ::toupper);
 }
 
-bool CompareIgnoreCase(std::string _Lhs, std::string _Rhs)
+bool ExporterUtils::CompareIgnoreCase(std::string _Lhs, std::string _Rhs)
 {
-	ToLower(_Lhs);
-	ToLower(_Rhs);
+	ExporterUtils::ToLower(_Lhs);
+	ExporterUtils::ToLower(_Rhs);
 	return _Lhs == _Rhs;
 }
 
-void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet)
+void ExporterUtils::UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet)
 {
 	std::stringstream ss{ _EnumData };
 	std::string token;
@@ -177,7 +178,7 @@ void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet)
 		_OutSet.emplace(token);
 }
 
-std::string ToScreamingSnake(const std::string& _Input)
+std::string ExporterUtils::ToScreamingSnake(const std::string& _Input)
 {
 	std::string result{};
 
@@ -195,7 +196,7 @@ std::string ToScreamingSnake(const std::string& _Input)
 	return result;
 }
 
-void ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To)
+void ExporterUtils::ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To)
 {
 	size_t pos{};
 	while ((pos = _Target.find(_From, pos)) != std::string::npos)
@@ -205,10 +206,10 @@ void ReplaceString(std::string& _Target, const std::string& _From, const std::st
 	}
 }
 
-void ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap)
+void ExporterUtils::ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap)
 {
 	for (const auto& fromTo : _FromToMap)
 	{
-		ReplaceString(_Target, fromTo.first, fromTo.second);
+		ExporterUtils::ReplaceString(_Target, fromTo.first, fromTo.second);
 	}
 }

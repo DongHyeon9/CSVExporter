@@ -37,7 +37,7 @@ bool SystemManager::Init()
         {
             baseDir.erase(baseDir.find_last_of("\\"));
         }
-        NormalizeDir(baseDir);
+        ExporterUtils::NormalizeDir(baseDir);
 
         dirMap.emplace(flagPair.first, baseDir + systemInit[flagPair.second]);
     }
@@ -74,7 +74,7 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
     std::istringstream issPrjName{ _File };
     while (std::getline(issPrjName, line))
     {
-        if (CompareIgnoreCase(line, INIT::PROJECT_NAME_FLAG))
+        if (ExporterUtils::CompareIgnoreCase(line, INIT::PROJECT_NAME_FLAG))
         {
             if (std::getline(issPrjName, line))
             {
@@ -94,8 +94,8 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
             if (std::getline(iss, line))
             {
                 std::string value{ line };
-                ReplaceString(value, MARK::PROJECT_NAME, projectName);
-                NormalizeDir(value);
+                ExporterUtils::ReplaceString(value, MARK::PROJECT_NAME, projectName);
+                ExporterUtils::NormalizeDir(value);
                 _SystemInit.emplace(std::move(key), std::move(value));
             }
         }

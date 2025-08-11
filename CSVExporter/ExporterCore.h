@@ -44,15 +44,15 @@ using uint64 = unsigned __int64;
 
 enum EDIR_FLAG
 {
-	CURRENT		=		1 << 1,
-	OUTPUT		=		1 << 2,
+	CURRENT		=		1 << 0,
+	OUTPUT		=		1 << 1,
 
-	CSV			=		1 << 3,
-	HEADER		=		1 << 4,
-	FORMAT		=		1 << 5,
+	CSV			=		1 << 2,
+	HEADER		=		1 << 3,
+	FORMAT		=		1 << 4,
 
-	CLIENT		=		1 << 6,
-	SERVER		=		1 << 7,
+	CLIENT		=		1 << 5,
+	SERVER		=		1 << 6,
 };
 
 enum class EHEADER_FORMAT : uint8
@@ -196,6 +196,7 @@ namespace GLOBAL
 	extern const std::string SERVER_POST_FIX;
 	extern const std::string CLIENT_POST_FIX;
 	extern const std::string CSV_POST_FIX;
+	extern const std::string HEADER_POST_FIX;
 
 	extern const std::string ERROR_NAME;
 	extern const std::string COMMENT;
@@ -238,30 +239,33 @@ namespace DATA_TYPE
 #pragma endregion Value
 
 #pragma region Function
-void NormalizeDir(std::string& _Path);
-std::wstring UTF8ToWstring(const std::string& _UTF8);
-std::string WstringToUTF8(const std::wstring& _UTF16);
-std::string UsesToString(EUSES _Uses);
-std::string DataTypeToString(const DataType& _DataType);
-EUSES StringToUses(const std::string& _Uses);
-DataType StringToDataType(std::string _DataType);
-void ToLower(std::string& _Str);
-void ToUpper(std::string& _Str);
-bool CompareIgnoreCase(std::string _Lhs, std::string _Rhs);
-void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet);
-std::string ToScreamingSnake(const std::string& _Input);
-void ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To);
-void ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap);
-template<class _Dst, class _Src>
-_Dst ConvertString(const _Src& String)
+namespace ExporterUtils
 {
-	if constexpr (std::is_same_v<_Dst, _Src>)
-		return String;
+	void NormalizeDir(std::string& _Path);
+	std::wstring UTF8ToWstring(const std::string& _UTF8);
+	std::string WstringToUTF8(const std::wstring& _UTF16);
+	std::string UsesToString(EUSES _Uses);
+	std::string DataTypeToString(const DataType& _DataType);
+	EUSES StringToUses(const std::string& _Uses);
+	DataType StringToDataType(std::string _DataType);
+	void ToLower(std::string& _Str);
+	void ToUpper(std::string& _Str);
+	bool CompareIgnoreCase(std::string _Lhs, std::string _Rhs);
+	void UnparseEnumData(std::string _EnumData, std::set<std::string>& _OutSet);
+	std::string ToScreamingSnake(const std::string& _Input);
+	void ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To);
+	void ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap);
+	template<class _Dst, class _Src>
+	_Dst ConvertString(const _Src& String)
+	{
+		if constexpr (std::is_same_v<_Dst, _Src>)
+			return String;
 
-	if constexpr (std::is_same_v<_Dst, std::wstring> && std::is_same_v<_Src, std::string>)
-		return UTF8ToWstring(String);
+		if constexpr (std::is_same_v<_Dst, std::wstring> && std::is_same_v<_Src, std::string>)
+			return ExporterUtils::UTF8ToWstring(String);
 
-	else if constexpr (std::is_same_v<_Dst, std::string> && std::is_same_v<_Src, std::wstring>)
-		return WstringToUTF8(String);
+		else if constexpr (std::is_same_v<_Dst, std::string> && std::is_same_v<_Src, std::wstring>)
+			return ExporterUtils::WstringToUTF8(String);
+	}
 }
 #pragma endregion Function
