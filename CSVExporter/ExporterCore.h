@@ -189,8 +189,10 @@ namespace std
 #pragma region Preprocess
 #ifdef _DEBUG
 #define LOG_LINE std::cout << __FUNCTION__ << "(" << __LINE__ << ") ";
+#define LOG_DEBUG(str, ...) LOG_LINE; printf_s(str, ##__VA_ARGS__);std::cout << std::endl
 #else
 #define LOG_LINE ((void)0)
+#define LOG_DEBUG ((void)0)
 #endif
 #define LOG(str, ...) LOG_LINE; printf_s(str, ##__VA_ARGS__);std::cout << std::endl
 #define CHECK(expr, ret, str) if(!(expr)) {LOG(str); return ret;}

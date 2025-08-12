@@ -28,6 +28,7 @@ bool SystemManager::Init()
 
     UnparseInitFile(fileString, systemInit);
 
+    // 설정에서 가져온 경로들 저장
     dirMap.reserve(INIT::OUTDIR_FLAG_MAP.bucket_count() + dirMap.bucket_count());
     for (const auto& flagPair : INIT::OUTDIR_FLAG_MAP)
     {
@@ -64,6 +65,7 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
 {
     std::string line{};
     std::istringstream issPrjName{ _File };
+    // 프로젝트 이름부터 추출(치환을 위해)
     while (std::getline(issPrjName, line))
     {
         if (ExporterUtils::CompareIgnoreCase(line, INIT::PROJECT_NAME_FLAG))
@@ -78,6 +80,8 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
 
     std::istringstream iss{ _File };
 
+    // 나머지 설정 추출
+    // 추출중 MARK::PROJECT_NAME에 따라 프로젝트 이름으로 변경해줌
     while (std::getline(iss, line)) 
     {
         if (line.size() >= 2 && line.front() == '[' && line.back() == ']') 
@@ -88,6 +92,7 @@ void SystemManager::UnparseInitFile(const std::string& _File, std::unordered_map
                 std::string value{ line };
                 ExporterUtils::ReplaceString(value, MARK::PROJECT_NAME, projectName);
                 ExporterUtils::NormalizeDir(value);
+                LOG_DEBUG("%s : %s", key.c_str(), value.c_str());
                 _SystemInit.emplace(std::move(key), std::move(value));
             }
         }
