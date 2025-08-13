@@ -50,9 +50,12 @@ enum EDIR_FLAG
 	CSV			=		1 << 2,
 	HEADER		=		1 << 3,
 	FORMAT		=		1 << 4,
+	CPP			=		1 << 5,
 
-	CLIENT		=		1 << 5,
-	SERVER		=		1 << 6,
+	CLIENT		=		1 << 6,
+	SERVER		=		1 << 7,
+
+	REBUILD		=		1 << 8,
 };
 
 enum class EHEADER_FORMAT : uint8
@@ -61,6 +64,9 @@ enum class EHEADER_FORMAT : uint8
 	STRUCT,
 	PRE_PROCESS,
 	DATA_TYPE,
+
+	MAPPER_HEADER,
+	MAPPER_CPP,
 
 	END,
 };
@@ -232,6 +238,8 @@ namespace MARK
 	extern const std::string STRUCT_VARIABLES;
 	extern const std::string DATA_TYPE;
 	extern const std::string VAR_NAME;
+	extern const std::string MAPPER_NAME;
+	extern const std::string MAPPER_VAR;
 }
 
 namespace HEADER_GEN

@@ -7,6 +7,9 @@ void HeaderGenerater::Execute()
 	std::vector<std::string> enumTypesFiles{ CreateEnum(enumNames) };
 	std::string structFile{ CreateStruct(enumNames) };
 
+	if (!SystemManager::GetInstance()->IsRebuild() && !(std::filesystem::exists(fileOutPath) && std::filesystem::is_regular_file(fileOutPath)))
+		SystemManager::GetInstance()->SetRebuild(true);
+
 	std::ofstream outFile{ fileOutPath.c_str() };
 	outFile << preprocessFile;
 	for (const auto& enumType : enumTypesFiles)

@@ -23,6 +23,8 @@ const std::unordered_map<int32, std::string> INIT::OUTDIR_FLAG_MAP
 
 	std::pair<int32,std::string>(EDIR_FLAG::SERVER | EDIR_FLAG::OUTPUT | EDIR_FLAG::CSV,"[ServerAdditionalDir_CSV]"),
 	std::pair<int32,std::string>(EDIR_FLAG::SERVER | EDIR_FLAG::OUTPUT | EDIR_FLAG::HEADER,"[ServerAdditionalDir_Header]"),
+
+	std::pair<int32,std::string>(EDIR_FLAG::REBUILD,"[RebuildBat]"),
 };
 
 const std::string MARK::PROJECT_NAME{ "{ProjectName}" };
@@ -34,13 +36,17 @@ const std::string MARK::STRUCT_NAME{ "{StructName}" };
 const std::string MARK::STRUCT_VARIABLES{ "{StructVariables}" };
 const std::string MARK::DATA_TYPE{ "{DataType}" };
 const std::string MARK::VAR_NAME{ "{VariableName}" };
+const std::string MARK::MAPPER_NAME{ "{MapperName}" };
+const std::string MARK::MAPPER_VAR{ "{MapperVar}" };
 
 const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> HEADER_GEN::FORMAT_FILE_NAMES
 {
-	"enum.fmt",			// ENUM
-	"struct.fmt",		// STRUCT
-	"pre_process.fmt",	// PRE_PROCESS
-	"data_type.fmt",	// DATA_TYPE
+	"enum.fmt",				// ENUM
+	"struct.fmt",			// STRUCT
+	"pre_process.fmt",		// PRE_PROCESS
+	"data_type.fmt",		// DATA_TYPE
+	"mapper_header.fmt",	// MAPPER_HEADER
+	"mapper_cpp.fmt",		// MAPPER_CPP
 };
 
 const std::string USES::ALL{ "A" };

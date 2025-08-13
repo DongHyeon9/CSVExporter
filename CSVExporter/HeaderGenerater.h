@@ -83,6 +83,7 @@ public:
 				return false;
 			}
 			formats[i] = { (std::istreambuf_iterator<char>(formatFile)), (std::istreambuf_iterator<char>()) };
+			formatFile.close();
 		}
 
 		std::istringstream iss{ formats[static_cast<int32>(EHEADER_FORMAT::DATA_TYPE)] };

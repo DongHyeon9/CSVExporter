@@ -163,6 +163,7 @@
     <ClCompile Include="ExporterCore.cpp" />
     <ClCompile Include="HeaderGenerater.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapperGenerator.cpp" />
     <ClCompile Include="SystemManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -224,6 +225,7 @@
     <ClInclude Include="ExporterCore.h" />
     <ClInclude Include="CSVExporter.h" />
     <ClInclude Include="HeaderGenerater.h" />
+    <ClInclude Include="MapperGenerator.h" />
     <ClInclude Include="SystemManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

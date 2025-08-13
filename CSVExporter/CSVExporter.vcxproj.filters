@@ -117,6 +117,9 @@
     <ClCompile Include="SystemManager.cpp">
       <Filter>Main\Class</Filter>
     </ClCompile>
+    <ClCompile Include="MapperGenerator.cpp">
+      <Filter>Main\Class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CSVExporter.h">
@@ -294,6 +297,9 @@
       <Filter>ThirdParty\OpenXLSX</Filter>
     </ClInclude>
     <ClInclude Include="SystemManager.h">
+      <Filter>Main\Class</Filter>
+    </ClInclude>
+    <ClInclude Include="MapperGenerator.h">
       <Filter>Main\Class</Filter>
     </ClInclude>
   </ItemGroup>
