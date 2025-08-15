@@ -1,4 +1,4 @@
 #pragma once
 #include "CoreMinimal.h"
 
-extern const TMap<FString, UScriptStruct*> {Name};
+extern const TMap<FName, UScriptStruct*> {Name};

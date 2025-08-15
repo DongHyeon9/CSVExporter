@@ -1,7 +1,7 @@
 #include "{Name}.h"
 {Headers}
 
-const TMap<FString, UScriptStruct*> {Name}
+const TMap<FName, UScriptStruct*> {Name}
 {
     {DataType}
 };
