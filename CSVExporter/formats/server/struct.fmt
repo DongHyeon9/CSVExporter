@@ -1,4 +1,4 @@
-struct F{StructName}
+struct F{Name}
 {
-	{StructVariables}
+	{DataType}
 };

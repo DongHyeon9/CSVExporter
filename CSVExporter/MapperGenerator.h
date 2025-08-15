@@ -3,17 +3,16 @@
 
 class MapperGenerator
 {
-private:
-	std::string cppFormat{};
-	std::string headerFormat{};
-
 public:
-	bool Init();
 	bool Execute();
 
 private:
 	bool CreateMapper();
 	bool ExcuteRebuild();
+
 	bool RunFile(const std::string& _File);
+	bool CreateHeader(const std::string& _Dir);
+	bool CreateCpp(const std::string& _Dir, const std::vector<std::string>& _Members);
+	std::string CreateMapperHeader(const std::string& _FileName);
 };
 

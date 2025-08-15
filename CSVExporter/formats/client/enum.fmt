@@ -1,6 +1,6 @@
 UENUM(BlueprintType)
-enum class {EnumName} : uint8
+enum class {Name} : uint8
 {
-	{EnumTypes}
+	{DataType}
 };
 

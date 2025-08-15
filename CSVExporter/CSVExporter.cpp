@@ -29,8 +29,8 @@ bool CSVExporter::MakeCSV(std::string _Path)
 	LOG("========== Parse : %s ==========", baseFilename.c_str());
 
 	OpenXLSX::XLDocument document{};
-	HeaderGenerater clientGenerator{};
-	HeaderGenerater serverGenerator{};
+	HeaderGenerater clientGenerator{ EUSES::CLIENT };
+	HeaderGenerater serverGenerator{ EUSES::SERVER };
 
 	document.open(targetPath);
 
@@ -45,11 +45,8 @@ bool CSVExporter::MakeCSV(std::string _Path)
 		auto workSheet{ workBook.worksheet(sheetName) };
 		auto sheetInfo{ UnparseSheet(workSheet) };
 
-		CHECK(clientGenerator.Init<EUSES::CLIENT>(sheetInfo.metaData, outputFileName), false, "클라이언트 헤더 제너레이터 초기화 실패");
-		CHECK(serverGenerator.Init<EUSES::SERVER>(sheetInfo.metaData, outputFileName), false, "서버 헤더 제너레이터 초기화 실패");
-
-		clientGenerator.Execute();
-		serverGenerator.Execute();
+		clientGenerator.Execute(sheetInfo.metaData, outputFileName);
+		serverGenerator.Execute(sheetInfo.metaData, outputFileName);
 
 		WirteCSV<EUSES::CLIENT>(sheetInfo, outputFileName_Client);
 		WirteCSV<EUSES::SERVER>(sheetInfo, outputFileName_Server);
@@ -62,13 +59,13 @@ bool CSVExporter::MakeCSV(std::string _Path)
 
 bool CSVExporter::ReadXlsx()
 {
-	ComInit com;
-	CComPtr<IFileOpenDialog> dlg;
+	ComInit com{};
+	CComPtr<IFileOpenDialog> dlg{};
 
 	CHECK(SUCCEEDED(dlg.CoCreateInstance(CLSID_FileOpenDialog)), false, "폴더 피커 인스터스 생성 실패");
 
 	// 파일 선택, 다중선택 허용
-	DWORD opts = 0;
+	DWORD opts{};
 	dlg->GetOptions(&opts);
 	dlg->SetOptions(opts | FOS_ALLOWMULTISELECT | FOS_PATHMUSTEXIST | FOS_FILEMUSTEXIST | FOS_FORCEFILESYSTEM);
 

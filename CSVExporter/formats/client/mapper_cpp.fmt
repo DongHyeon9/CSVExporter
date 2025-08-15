@@ -1,1 +1,7 @@
-asdfzxcv
+#include "{Name}.h"
+{Headers}
+
+const TMap<FString, UScriptStruct*> {Name}
+{
+    {DataType}
+};

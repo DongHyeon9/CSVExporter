@@ -1,7 +1,9 @@
 int:int32
 float:float
 string:FString
-enum:E{EnumName}
+enum:E{Name}
 array:TArray<{DataType}>
-structVar:UPROPERTY(EditAnywhere, BlueprintReadOnly) {DataType} {VariableName}{};
-enumMember:{EnumMember},
+structVar:UPROPERTY(EditAnywhere, BlueprintReadOnly) {DataType} {Name}{};
+enumMember:{Name},
+mapperMember:{ TEXT("{Name}"), F{Name}::StaticStruct() },
+mapperHeader:#include "{Name}.h"

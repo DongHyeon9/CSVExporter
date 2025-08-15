@@ -1,5 +1,5 @@
 #pragma once
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "{FileName}.generated.h"
+#include "{Name}.generated.h"
 

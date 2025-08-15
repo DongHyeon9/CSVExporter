@@ -1,7 +1,7 @@
 USTRUCT(BlueprintType, Atomic)
-struct F{StructName} : public FTableRowBase 
+struct F{Name} : public FTableRowBase 
 {
 	GENERATED_BODY()
 
-	{StructVariables}
+	{DataType}
 };

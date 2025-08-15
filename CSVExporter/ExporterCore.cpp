@@ -4,6 +4,7 @@ const std::string GLOBAL::SERVER_POST_FIX{ "_Server" };
 const std::string GLOBAL::CLIENT_POST_FIX{ "_Client" };
 const std::string GLOBAL::CSV_POST_FIX{ ".csv" };
 const std::string GLOBAL::HEADER_POST_FIX{ ".h" };
+const std::string GLOBAL::CPP_POST_FIX{ ".cpp" };
 
 const std::string GLOBAL::ERROR_NAME{ "Error" };
 const std::string GLOBAL::COMMENT{ "#" };
@@ -25,19 +26,14 @@ const std::unordered_map<int32, std::string> INIT::OUTDIR_FLAG_MAP
 	std::pair<int32,std::string>(EDIR_FLAG::SERVER | EDIR_FLAG::OUTPUT | EDIR_FLAG::HEADER,"[ServerAdditionalDir_Header]"),
 
 	std::pair<int32,std::string>(EDIR_FLAG::REBUILD,"[RebuildBat]"),
+
+	std::pair<int32,std::string>(EDIR_FLAG::CLIENT | EDIR_FLAG::OUTPUT | EDIR_FLAG::MAPPER,"[ClientMapperDir]"),
 };
 
 const std::string MARK::PROJECT_NAME{ "{ProjectName}" };
-const std::string MARK::FILE_NAME{ "{FileName}" };
-const std::string MARK::ENUM_NAME{ "{EnumName}" };
-const std::string MARK::ENUM_MEMBER{ "{EnumMember}" };
-const std::string MARK::ENUM_TYPES{ "{EnumTypes}" };
-const std::string MARK::STRUCT_NAME{ "{StructName}" };
-const std::string MARK::STRUCT_VARIABLES{ "{StructVariables}" };
+const std::string MARK::NAME{ "{Name}" };
 const std::string MARK::DATA_TYPE{ "{DataType}" };
-const std::string MARK::VAR_NAME{ "{VariableName}" };
-const std::string MARK::MAPPER_NAME{ "{MapperName}" };
-const std::string MARK::MAPPER_VAR{ "{MapperVar}" };
+const std::string MARK::HEADERS{ "{Headers}" };
 
 const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> HEADER_GEN::FORMAT_FILE_NAMES
 {
@@ -48,6 +44,7 @@ const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> HEADER_GE
 	"mapper_header.fmt",	// MAPPER_HEADER
 	"mapper_cpp.fmt",		// MAPPER_CPP
 };
+const std::string HEADER_GEN::CLIENT_MAPPER_NAME{ "DataTableMapper" };
 
 const std::string USES::ALL{ "A" };
 const std::string USES::CLIENT{ "C" };
@@ -104,11 +101,12 @@ std::string ExporterUtils::UsesToString(EUSES _Uses)
 {
 	switch (_Uses)
 	{
-	case EUSES::ALL:		return USES::ALL;
+	case EUSES::NONE:		return USES::ALL;
 	case EUSES::CLIENT:		return USES::CLIENT;
 	case EUSES::SERVER:		return USES::SERVER;
 	}
 	assert(false);
+	return std::string{};
 }
 
 std::string ExporterUtils::DataTypeToString(const DataType& _DataType)
@@ -130,11 +128,12 @@ EUSES ExporterUtils::StringToUses(const std::string& _Uses)
 {
 	if (ExporterUtils::CompareIgnoreCase(_Uses, USES::CLIENT))				return EUSES::CLIENT;
 	else if (ExporterUtils::CompareIgnoreCase(_Uses, USES::SERVER))			return EUSES::SERVER;
-	else if (ExporterUtils::CompareIgnoreCase(_Uses, USES::ALL))			return EUSES::ALL;
+	else if (ExporterUtils::CompareIgnoreCase(_Uses, USES::ALL))			return EUSES::NONE;
 	else
 	{
 		LOG("알 수 없는 사용처 : %s", _Uses.c_str());
 		assert(false);
+		return EUSES::NONE;
 	}
 }
 
@@ -240,4 +239,20 @@ void ExporterUtils::ReplaceString(std::string& _Target, const std::unordered_map
 	{
 		ExporterUtils::ReplaceString(_Target, fromTo.first, fromTo.second);
 	}
+}
+
+bool ExporterUtils::ListHeaderFiles(const std::string& _Dir, std::vector<std::string>& _OutHeaders)
+{
+	std::filesystem::path dir{ _Dir };
+	CHECK(std::filesystem::is_directory(dir), false, "잘못된 경로 입니다");
+	CHECK(std::filesystem::exists(dir), false, "경로가 존재하지 않습니다");
+
+	for (const auto& entry : std::filesystem::directory_iterator(dir)) 
+	{
+		if (std::filesystem::is_regular_file(entry.path()) && entry.path().extension() == ".h") 
+		{
+			_OutHeaders.emplace_back(entry.path().stem().string());
+		}
+	}
+	return true;
 }

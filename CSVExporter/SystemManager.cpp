@@ -38,6 +38,9 @@ bool SystemManager::Init()
 
 	initFile.close();
 
+	CHECK(CreateFormat<EUSES::CLIENT>(), false, "클라이언트 포맷 파일이 없음");
+	CHECK(CreateFormat<EUSES::SERVER>(), false, "서버 포맷 파일이 없음");
+
 	LOG("시스템 초기화 성공!");
 	return true;
 }
@@ -61,17 +64,9 @@ int32 SystemManager::Run()
 	if (bIsRebuild)
 	{
 		MapperGenerator mapperGenerator{};
-		if (mapperGenerator.Init())
+		if (!mapperGenerator.Execute())
 		{
-			if (!mapperGenerator.Execute())
-			{
-				LOG("Mapper Generator 실행 실패");
-				END_OF_PROGRAM(-1);
-			}
-		}
-		else
-		{
-			LOG("Mapper Generator 초기화 실패");
+			LOG("Mapper Generator 실행 실패");
 			END_OF_PROGRAM(-1);
 		}
 	}

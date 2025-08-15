@@ -44,18 +44,19 @@ using uint64 = unsigned __int64;
 
 enum EDIR_FLAG
 {
-	CURRENT		=		1 << 0,
-	OUTPUT		=		1 << 1,
+	CURRENT				=		1 << 0,
+	OUTPUT				=		1 << 1,
 
-	CSV			=		1 << 2,
-	HEADER		=		1 << 3,
-	FORMAT		=		1 << 4,
-	CPP			=		1 << 5,
+	CSV					=		1 << 2,
+	HEADER				=		1 << 3,
+	FORMAT				=		1 << 4,
+	CPP					=		1 << 5,
 
-	CLIENT		=		1 << 6,
-	SERVER		=		1 << 7,
+	CLIENT				=		1 << 6,
+	SERVER				=		1 << 7,
 
-	REBUILD		=		1 << 8,
+	REBUILD				=		1 << 8,
+	MAPPER				=		1 << 9,
 };
 
 enum class EHEADER_FORMAT : uint8
@@ -73,18 +74,27 @@ enum class EHEADER_FORMAT : uint8
 
 enum class EDATA_TYPE : uint8
 {
-	//data_type.fmt와 순서를 맞춰줘야됨
-	INT=0,
+	// data_type.fmt와 순서를 맞춰줘야됨
+	INT = 0,
 	FLOAT,
 	STRING,
 	ENUM,
+
+	ARRAY,
+	STRUCT_VAR,
+	ENUM_MEMBER,
+
+	MAPPER_MEMBER,
+	MAPPER_HEADER,
+
+	END,
 };
 
 enum class EUSES : uint8
 {
-	ALL,
 	CLIENT,
 	SERVER,
+	NONE,
 };
 
 enum class ELINE_TYPE : uint8
@@ -189,6 +199,16 @@ namespace std
 			return h1 | h2;
 		}
 	};
+
+	template <>
+	struct hash<EUSES>
+	{
+		size_t operator()(const EUSES& _Ref) const noexcept
+		{
+			using std::hash;
+			return hash<uint32>()(static_cast<uint32>(_Ref));
+		}
+	};
 }
 #pragma endregion Struct
 
@@ -212,6 +232,7 @@ namespace GLOBAL
 	extern const std::string CLIENT_POST_FIX;
 	extern const std::string CSV_POST_FIX;
 	extern const std::string HEADER_POST_FIX;
+	extern const std::string CPP_POST_FIX;
 
 	extern const std::string ERROR_NAME;
 	extern const std::string COMMENT;
@@ -230,21 +251,15 @@ namespace INIT
 namespace MARK
 {
 	extern const std::string PROJECT_NAME;
-	extern const std::string FILE_NAME;
-	extern const std::string ENUM_NAME;
-	extern const std::string ENUM_MEMBER;
-	extern const std::string ENUM_TYPES;
-	extern const std::string STRUCT_NAME;
-	extern const std::string STRUCT_VARIABLES;
+	extern const std::string NAME;
 	extern const std::string DATA_TYPE;
-	extern const std::string VAR_NAME;
-	extern const std::string MAPPER_NAME;
-	extern const std::string MAPPER_VAR;
+	extern const std::string HEADERS;
 }
 
 namespace HEADER_GEN
 {
 	extern const std::array<std::string, static_cast<int32>(EHEADER_FORMAT::END)> FORMAT_FILE_NAMES;
+	extern const std::string CLIENT_MAPPER_NAME;
 }
 
 namespace USES
@@ -282,6 +297,7 @@ namespace ExporterUtils
 	std::string ToScreamingSnake(const std::string& _Input);
 	void ReplaceString(std::string& _Target, const std::string& _From, const std::string& _To);
 	void ReplaceString(std::string& _Target, const std::unordered_map<std::string, std::string>& _FromToMap);
+	bool ListHeaderFiles(const std::string& _Dir, std::vector<std::string>& _OutHeaders);
 	template<class _Dst, class _Src>
 	_Dst ConvertString(const _Src& String)
 	{

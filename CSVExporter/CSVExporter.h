@@ -41,7 +41,7 @@ private:
 		{
 			for (size_t j = 0; j < _SheetInfo.csv[i].size(); ++j)
 			{
-				if (_SheetInfo.metaData.usesList[j] != EUSES::ALL && _SheetInfo.metaData.usesList[j] != _USES) continue;
+				if (_SheetInfo.metaData.usesList[j] != EUSES::NONE && _SheetInfo.metaData.usesList[j] != _USES) continue;
 
 				std::string prefix{};
 				std::string postfix{};
