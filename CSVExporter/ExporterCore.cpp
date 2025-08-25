@@ -53,6 +53,7 @@ const std::string USES::SERVER{ "S" };
 const std::string DATA_TYPE::INT{ "int" };
 const std::string DATA_TYPE::FLOAT{ "float" };
 const std::string DATA_TYPE::ENUM{ "enum" };
+const std::string DATA_TYPE::BOOL{ "bool" };
 const std::string DATA_TYPE::STRING{ "string" };
 const std::string DATA_TYPE::ARRAY{ "[]" };
 const std::string DATA_TYPE::META_DATA_FLAG{ ":" };
@@ -118,6 +119,7 @@ std::string ExporterUtils::DataTypeToString(const DataType& _DataType)
 	case EDATA_TYPE::FLOAT:			result = DATA_TYPE::FLOAT;			break;
 	case EDATA_TYPE::STRING:		result = DATA_TYPE::STRING;			break;
 	case EDATA_TYPE::ENUM:			result = DATA_TYPE::ENUM;			break;
+	case EDATA_TYPE::BOOL:			result = DATA_TYPE::BOOL;			break;
 	default: { assert(false); }
 	}
 	if (_DataType.bIsArray) 	result += DATA_TYPE::ARRAY;
@@ -158,6 +160,7 @@ DataType ExporterUtils::StringToDataType(std::string _DataType)
 	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::INT))		result.dataType = EDATA_TYPE::INT;
 	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::FLOAT))		result.dataType = EDATA_TYPE::FLOAT;
 	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::ENUM))		result.dataType = EDATA_TYPE::ENUM;
+	else if (ExporterUtils::CompareIgnoreCase(_DataType, DATA_TYPE::BOOL))		result.dataType = EDATA_TYPE::BOOL;
 	else
 	{
 		LOG("알 수 없는 데이터 타입 : %s", _DataType.c_str());

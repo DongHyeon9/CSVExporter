@@ -1,6 +1,7 @@
 int:int32
 float:float
 string:std::string
+bool:bool
 enum:E{Name}
 array:std::vector<{DataType}>
 structVar:{DataType} {Name}{};

@@ -78,6 +78,7 @@ enum class EDATA_TYPE : uint8
 	INT = 0,
 	FLOAT,
 	STRING,
+	BOOL,
 	ENUM,
 
 	ARRAY,
@@ -274,6 +275,7 @@ namespace DATA_TYPE
 	extern const std::string INT;
 	extern const std::string FLOAT;
 	extern const std::string ENUM;
+	extern const std::string BOOL;
 	extern const std::string STRING;
 	extern const std::string ARRAY;
 	extern const std::string META_DATA_FLAG;

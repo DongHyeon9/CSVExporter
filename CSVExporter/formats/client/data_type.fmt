@@ -1,6 +1,7 @@
 int:int32
 float:float
 string:FString
+bool:bool
 enum:E{Name}
 array:TArray<{DataType}>
 structVar:UPROPERTY(EditAnywhere, BlueprintReadOnly) {DataType} {Name}{};
